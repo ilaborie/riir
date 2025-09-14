@@ -1,0 +1,15 @@
+default_job = "toboggan"
+
+[jobs.toboggan]
+command = ["toboggan-cli", "--output", "riir.toml", "./slides/"]
+need_stdout = true
+allow_warnings = true
+default_watch = false
+watch = ["slides"]
+
+[jobs.html]
+command = ["toboggan-cli", "--output", "riir.html", "./slides/"]
+need_stdout = true
+allow_warnings = true
+default_watch = false
+watch = ["slides"]

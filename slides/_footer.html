@@ -1,0 +1,161 @@
+<style>
+    :host {
+        width: 100%;
+        position: relative;
+        --percentage: calc((var(--current-slide) / var(--total-slides)) * 100%);
+        --show-algue1: min(1, max(0, var(--current-slide) - 2));
+        --show-algue4: min(1, max(0, var(--current-slide) - 6));
+        --show-algue3: min(1, max(0, var(--current-slide) - 13));
+        --show-algue5: min(1, max(0, var(--current-slide) - 20));
+        --show-serpent: min(1, max(0, var(--current-slide) - 27));
+        --show-urchin: min(1, max(0, var(--current-slide) - 23));
+        --show-algue6: min(1, max(0, var(--current-slide) - 34));
+        --show-algue7: min(1, max(0, var(--current-slide) - 38));
+        --show-crab1: min(1, max(0, var(--current-slide) - 10));
+        background: linear-gradient(
+            80deg,
+            var(--fg),
+            var(--fg) var(--percentage),
+            var(--bg) var(--percentage)
+        );
+        padding: var(--spacing-xs) 1em;
+        overflow: visible;
+    }
+
+    .footer-decor {
+        position: absolute;
+        pointer-events: none;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: opacity 1s;
+    }
+
+    .algues1 {
+        width: 8vw;
+        height: 8vw;
+        left: 1%;
+        bottom: 0;
+        transform: translateY(-29%);
+        background-image: url(./public/items/algues1.svg);
+        opacity: var(--show-algue1);
+    }
+
+    .algue4 {
+        width: 6vw;
+        height: 5vw;
+        left: 9%;
+        bottom: 0;
+        transform: translateY(-47%);
+        background-image: url(./public/items/algue4.svg);
+        opacity: var(--show-algue4);
+    }
+
+    .algue3 {
+        width: 6vw;
+        height: 6vw;
+        left: 28%;
+        bottom: 0;
+        transform: translateY(-40%);
+        background-image: url(./public/items/algue3.svg);
+        opacity: var(--show-algue3);
+    }
+
+    .algue5 {
+        width: 8vw;
+        height: 8vw;
+        left: 45%;
+        bottom: 0;
+        transform: translateY(-21%);
+        background-image: url(./public/items/algue5.svg);
+        opacity: var(--show-algue5);
+    }
+
+    .algue6 {
+        width: 7vw;
+        height: 7vw;
+        left: 79%;
+        bottom: 0;
+        transform: translateY(-26%);
+        background-image: url(./public/items/algue6.svg);
+        opacity: var(--show-algue6);
+    }
+
+    .algue7 {
+        width: 11vw;
+        height: 11vw;
+        left: 89%;
+        bottom: 0;
+        transform: translateY(-12%);
+        background-image: url(./public/items/algue7.svg);
+        opacity: var(--show-algue7);
+    }
+
+    .animal-serpent {
+        width: 9vw;
+        height: 9vw;
+        left: 64%;
+        bottom: 0;
+        transform: translateY(-2%);
+        background-image: url(./public/items/animal_serpent.svg);
+        opacity: var(--show-serpent);
+    }
+
+    .crab1 {
+        width: 4vw;
+        height: 4vw;
+        left: 22%;
+        bottom: 0;
+        transform: translateY(-45%);
+        background-image: url(./public/items/animal_crabe.svg);
+        opacity: var(--show-crab1);
+    }
+
+    .urchin {
+        width: 4vw;
+        height: 4vw;
+        left: 56%;
+        bottom: 0;
+        transform: translateY(-45%);
+        background-image: url(./public/items/forme4.svg);
+        opacity: var(--show-urchin);
+    }
+
+    .footer-txt {
+        padding: 0 1em;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        counter-set: slide-total var(--total-slides);
+
+        background: linear-gradient(
+            80deg,
+            var(--bg) var(--percentage),
+            var(--fg) var(--percentage)
+        );
+        background-clip: text;
+        color: transparent;
+    }
+
+    .footer-txt::after {
+        counter-set: slide-number var(--current-slide);
+        content: counter(slide-number) " / " counter(slide-total);
+        text-align: right;
+        width: 6em;
+    }
+</style>
+
+<div class="footer-decor algues1"></div>
+<div class="footer-decor algue4"></div>
+<div class="footer-decor algue3"></div>
+<div class="footer-decor algue5"></div>
+<div class="footer-decor animal-serpent"></div>
+<div class="footer-decor algue6"></div>
+<div class="footer-decor algue7"></div>
+<div class="footer-decor crab1"></div>
+<div class="footer-decor urchin"></div>
+
+<div class="footer-txt">
+    <span>Devfest Toulouse 2025</span>
+    <span>Peut-on RIIR de tout ?</span>
+</div>

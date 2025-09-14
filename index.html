@@ -1,0 +1,2083 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peut-on RIIR de tout ?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <style>
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+}
+
+*:focus:not(:is(input, textarea)) {
+	outline: none;
+}
+
+*:focus-visible {
+	outline: 1px solid blue;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		interpolate-size: allow-keywords;
+	}
+}
+
+html {
+	height: 100%;
+	line-height: 1.5;
+	font-synthesis: none;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: auto;
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+
+	color: black;
+}
+body {
+	height: 100%;
+	overscroll-behavior: none;
+	accent-color: black;
+	background: white;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
+	overflow-wrap: break-word;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+}
+
+input,
+textarea,
+button,
+button:disabled {
+	font: inherit;
+	color: inherit;
+	border: none;
+	border-radius: 0;
+	background: none;
+}
+
+fieldset {
+	border: none;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+ul,
+ol {
+	list-style: none;
+}
+main {
+	isolation: isolate;
+}
+
+    </style>
+    <style>
+:root {
+	/* Typography */
+	--font-slide-title: system-ui, -apple-system, sans-serif;
+	--font-slide-body: system-ui, -apple-system, sans-serif;
+	--font-slide-mono: ui-monospace, monospace;
+	--font-weight-semibold: 600;
+	--font-weight-bold: bold;
+
+	--bg: white;
+	--fg: black;
+	--accent: teal;
+	--accent2: purple;
+
+	/* Status/Semantic Colors */
+	--color-success: #10b981;
+	--color-info: #3b82f6;
+	--color-warning: #d97706;
+	--color-error: #dc2626;
+
+	/* Transparency */
+	--color-border-transparent: rgba(255, 255, 255, 0.3);
+	--color-hover-bg: rgba(0, 0, 0, 0.1);
+
+	/* Icon Sizes */
+	--icon-size-sm: 1em;
+	--icon-size-md: 1.5em;
+
+	/* Component Dimensions */
+	--button-padding: 0.5em;
+	--button-size: calc(var(--icon-size-sm) + 2 * var(--button-padding));
+
+	/* Spacing */
+	--spacing-xs: 0.25em;
+	--spacing-sm: 0.5em;
+	--spacing-md: 1em;
+
+	/* Border Radius */
+	--radius-sm: 0.25em;
+
+	/* Animation Durations */
+	--transition-fast: 0.2s;
+	--animation-fast: 0.3s;
+	--toast-duration: 10s;
+
+	/* Steps */
+	--step-transition-duration: var(--transition-fast);
+	--step-transition-timing: ease-in-out;
+	--step-opacity-hidden: 0;
+	--step-opacity-revealed: 0.9;
+	--step-opacity-active: 1;
+
+	/* Toast Status Icons */
+	/* check-circle */
+	--icon-success: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'/%3e%3cpath d='m9 11 3 3L22 4'/%3e%3c/svg%3e");
+	/* alert-triangle */
+	--icon-warning: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'/%3e%3cpath d='M12 9v4'/%3e%3cpath d='m12 17 .01 0'/%3e%3c/svg%3e");
+	/* x-circle */
+	--icon-error: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='12' cy='12' r='10'/%3e%3cpath d='m15 9-6 6'/%3e%3cpath d='m9 9 6 6'/%3e%3c/svg%3e");
+	/* info */
+	--icon-info: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='12' cy='12' r='10'/%3e%3cpath d='M12 16v-4'/%3e%3cpath d='m12 8 .01 0'/%3e%3c/svg%3e");
+}
+
+html {
+	font-size: 32px;
+}
+
+body {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100vw;
+	font-family: var(--font-slide-body);
+	overflow: hidden;
+}
+
+main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: var(--bg);
+}
+
+.toboggan-slide {
+	flex: 1;
+	overflow-y: auto;
+}
+
+.toboggan-footer {
+	flex-shrink: 0;
+}
+
+.toboggan-toast {
+	position: fixed;
+	z-index: 1000;
+	bottom: 1rem;
+	right: 1rem;
+}
+
+    </style>
+    <style>
+.toboggan-slide {
+	color: var(--fg);
+	background-color: var(--bg);
+}
+
+/* Fonts */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-slide-title);
+	margin: 0.1em 0;
+}
+
+h1 {
+	font-size: 350%;
+	text-align: center;
+}
+
+h2 {
+	font-size: 200%;
+	text-align: center;
+}
+
+h3 {
+	font-size: 150%;
+}
+
+h4 {
+	font-size: 115%;
+}
+
+h5 {
+	font-size: 110%;
+}
+
+h5 {
+	font-size: 105%;
+}
+
+ul,
+ol,
+dl {
+	margin: 0.1em;
+	list-style: none;
+}
+
+article {
+	font-family: var(--font-slide-body);
+	position: relative;
+}
+
+pre,
+code {
+	color: var(--accent2);
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
+	font-family: var(--font-slide-mono);
+}
+
+/* Layout */
+section {
+	margin: 1rem auto 0;
+	width: 80vw;
+	min-height: calc(100% - 1rem);
+	max-height: calc(100% - 1rem);
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+
+	h2 {
+		flex: 0 0 auto;
+	}
+
+	article {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+	}
+}
+
+/* abbr */
+abbr {
+	text-decoration-line: none;
+	cursor: help;
+
+	&:hover,
+	&:active {
+		color: var(--accent);
+		text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
+		text-decoration: underline dotted;
+	}
+}
+
+/* Links */
+a,
+a:visited {
+	color: var(--accent);
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+/* Links */
+code {
+	color: var(--accent2);
+	border: thin solid transparent;
+	border-radius: 0.25em;
+	padding: 0 0.125em;
+
+	&:hover {
+		border-color: rgba(0, 0, 0, 0.25);
+	}
+}
+
+/* Common layout */
+
+.block {
+	--offset: 0.25em;
+	background: var(--bg);
+	color: var(--fg);
+	font-weight: bold;
+	display: inline;
+	padding: 0.1em calc(var(--offset) * 2);
+	clip-path: polygon(
+		var(--offset) 0,
+		100% 0,
+		calc(100% - var(--offset)) 100%,
+		0 100%
+	);
+}
+
+.two-columns {
+	columns: 2;
+}
+
+/* Steps */
+.step {
+	opacity: var(--step-opacity-hidden);
+	transition: opacity var(--step-transition-duration)
+		var(--step-transition-timing);
+
+	&.step-done {
+		opacity: var(--step-opacity-revealed);
+
+		&:nth-last-of-type {
+			opacity: var(--step-opacity-active);
+		}
+	}
+}
+
+.step a {
+	pointer-events: none;
+}
+
+.step.step-done a {
+	pointer-events: auto;
+}
+
+.step-line-through .step.step-done:not(.step-current) {
+	opacity: 0.9;
+	text-decoration: line-through 0.25em;
+}
+
+/* Predefined style (can be used in frontmatter like `classes = ["no_title"]`) */
+section.no_title > h2 {
+	display: none;
+}
+
+section.spread-steps {
+	article > h3 {
+		padding: 0.5em 0;
+		flex: 0 0 auto;
+	}
+
+	article > .step {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+}
+
+section.cover,
+section.center {
+	align-items: center;
+	justify-content: space-between;
+
+	article {
+		justify-content: center;
+	}
+}
+
+/* TODO GRID */
+
+    </style>
+    <style>
+body {
+	height: auto;
+	overflow: auto;
+	background-color: unset;
+	max-width: 100vw;
+	overflow-x: hidden;
+}
+
+main {
+	height: auto;
+	overflow: auto !important;
+	display: flex;
+	gap: 1rem;
+	background: unset;
+
+	.toboggan-slide {
+		min-height: 100vh;
+		max-height: 100vh;
+		outline: thin solid rgba(0, 0, 0, .25);
+		display: flex;
+		box-shadow: 1px 1px 1em rgba(0, 0, 0, .25);
+
+		.step {
+			opacity: 1 !important;
+		}
+	}
+}
+
+@media print {
+	html {
+		font-size: 24px;
+	}
+
+	body {
+		overflow: visible;
+	}
+
+	main {
+		overflow: visible;
+		gap: 0;
+	}
+
+	.toboggan-slide {
+		page-break-after: always;
+		page-break-inside: avoid;
+		min-height: 100vh;
+		overflow: visible;
+	}
+
+	.toboggan-slide:last-child {
+		page-break-after: auto;
+	}
+
+	/* Ensure steps are visible in print */
+	.step {
+		opacity: 1 !important;
+	}
+}
+
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+    rel="stylesheet"
+/>
+<link href="./public/style.css" rel="stylesheet" />
+
+</head>
+
+<body>
+    <main>
+<div class="toboggan-slide"><section class="no_title cover" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/forme9.svg),
+    url(./public/items/animal_meduse.svg),
+    url(./public/items/forme6.svg),
+    url(./public/items/forme6.svg),
+    url(./public/items/forme8.svg),
+    url(./public/items/forme8.svg),
+    url(./public/items/forme8.svg),
+    url(./public/items/forme8.svg)
+    ;
+background-position:
+    103% -30%,
+    -4% 0%,
+    101% 45%,
+    65% 1%,
+    5% 40%,
+    67% 53%,
+    69% 50%,
+    65% 27%,
+    51% 13%
+    ;
+background-size:
+    30vw,
+    50vw,
+    13vw,
+    15vw,
+    12vw,
+    3.5vw,
+    2.5vw,
+    4vw,
+    2vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>Peut-on RIIR de tout ?</h2><article><style>
+
+h1 {
+    font-size: 300%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+
+section.cover, section.center {
+  & article {
+    justify-content: center;
+    align-items: center;
+    align-self: start;
+    margin-left: 3em;
+    width: calc(100% - 3em);
+  }
+}
+
+.crab {
+    width: 30vw;
+    position: absolute;
+    bottom: -4vh;
+    right: -2vw;
+    transform: rotate(-.05turn);
+}
+
+.shell1 {
+    width: 10vw;
+    position: absolute;
+    bottom: 16vh;
+    right: 24vw;
+    transform: rotate(.05turn);
+}
+
+.shell2 {
+    width: 10vw;
+    position: absolute;
+    bottom: 22vh;
+    right: 12vw;
+    transform: rotate(-0.08turn);
+}
+
+.shrimp {
+    width: 12vw;
+    position: absolute;
+    top: 26vh;
+    right: 27vw;
+    transform: rotate(-0.05turn);
+}
+
+</style>
+<h1>Peut-on <abbr title="Rewrite It In Rust">RIIR</abbr> de tout ?</h1>
+<figure class="crab">
+    <img src="./public/items/animal_crabe.svg">
+</figure>
+<figure class="shell1">
+    <img src="./public/items/coquillage1.svg">
+</figure>
+<figure class="shell2">
+    <img src="./public/items/coquillage2.svg">
+</figure>
+<figure class="shrimp">
+    <img src="./public/items/animal_crevette.svg">
+</figure>
+</article></section></div><div class="toboggan-slide"><section class="no_title center part"><h2>1. Quèsaco ?</h2><article><h2>Il était une fois...</h2>
+</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.1 Vous avez un message</h2><article><style>
+#icon-mail {
+    margin: auto 0;
+    width: 20vmin;
+    position: relative;
+    align-self: center;
+}
+#icon-mail::before {
+    content: '1';
+    position: absolute;
+    top: -.4em;
+    right: -.4em;
+    width: 1.4em;
+    height: 1.4em;
+    border-radius: 50%;
+    background-color: #f0433a;
+    color: #fff;
+    box-shadow: 0 0 .1em rgba(0,0,0,.5);
+    text-shadow: 0 0 .1em rgba(0,0,0,.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+<figure id="icon-mail">
+    <img src="./public/mail.svg">
+</figure>
+</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.2 Nouvelle CVE</h2><article><style>
+.mail {
+    font-size: 80%;
+    margin: .5em;
+    padding: .5em;
+    background: white;
+    border: thin solid gray;
+    border-radius: .5em;
+    box-shadow: .1em .1em .2em rgba(0, 0, 0, .8);
+}
+
+.mail header {
+    display: grid;
+    grid-template-columns: 4rem auto;
+    grid-template-areas:
+        "avatar name"
+        "avatar title"
+        "avatar to";
+
+    .avatar {
+        grid-area: avatar;
+
+        img {
+            width: 2em;
+            height: 2em;
+            border: thin solid rgba(0,0,0,.2);
+            border-radius: 50%;
+            padding: .125em;
+            box-shadow: .1em .1em .2em rgba(0, 0, 0, .8);
+        }
+    }
+
+    .name {
+        grid-area: name;
+    }
+    .title {
+        grid-area: title;
+    }
+    .to {
+        grid-area: to;
+    }
+
+}
+
+.toolbar {
+    float:right;
+    display: flex;
+    gap: 1em;
+
+    ul {
+        border: thin solid rgba(0,0,0,.2);
+        border-radius: .5em;
+        padding: 0 .3em;
+        display: flex;
+        gap: .5em;
+        background: #eee;
+        box-shadow: .02em .0em rgba(0, 0, 0, .5);
+    }
+}
+
+.mail .body {
+    font-family: Inconsolata Nerd Font Mono, system-ui, -apple-system, sans-serif;
+    
+    .score {
+        color: firebrick;
+        font-family: mono;
+    }
+}
+</style>
+<div class="mail">
+    <div class="toolbar">
+        <ul>
+            <li title="Reply">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWljb24gbHVjaWRlLXJlcGx5Ij48cGF0aCBkPSJNMjAgMTh2LTJhNCA0IDAgMCAwLTQtNEg0Ii8+PHBhdGggZD0ibTkgMTctNS01IDUtNSIvPjwvc3ZnPg==">
+            <li title="Reply All">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWFsbC1pY29uIGx1Y2lkZS1yZXBseS1hbGwiPjxwYXRoIGQ9Im0xMiAxNy01LTUgNS01Ii8+PHBhdGggZD0iTTIyIDE4di0yYTQgNCAwIDAgMC00LTRINyIvPjxwYXRoIGQ9Im03IDE3LTUtNSA1LTUiLz48L3N2Zz4=">
+            </li>
+            <li title="Forward">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWljb24gbHVjaWRlLXJlcGx5Ij48cGF0aCBkPSJNMjAgMTh2LTJhNCA0IDAgMCAwLTQtNEg0Ii8+PHBhdGggZD0ibTkgMTctNS01IDUtNSIvPjwvc3ZnPg==">
+            </li>
+        </ul>
+        <ul>
+            <li title="Archive">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFyY2hpdmUtaWNvbiBsdWNpZGUtYXJjaGl2ZSI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjUiIHg9IjIiIHk9IjMiIHJ4PSIxIi8+PHBhdGggZD0iTTQgOHYxMWEyIDIgMCAwIDAgMiAyaDEyYTIgMiAwIDAgMCAyLTJWOCIvPjxwYXRoIGQ9Ik0xMCAxMmg0Ii8+PC9zdmc+">
+            </li>
+            <li title="Delete">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRyYXNoLWljb24gbHVjaWRlLXRyYXNoIj48cGF0aCBkPSJNMTkgNnYxNGEyIDIgMCAwIDEtMiAySDdhMiAyIDAgMCAxLTItMlY2Ii8+PHBhdGggZD0iTTMgNmgxOCIvPjxwYXRoIGQ9Ik04IDZWNGEyIDIgMCAwIDEgMi0yaDRhMiAyIDAgMCAxIDIgMnYyIi8+PC9zdmc+">
+            </li>
+        </ul>
+    </div>
+    <header>
+        <figure class="avatar">
+            <img src="https://robohash.org/620050a4db5104bae758cd75171d64ca?set=set4">
+        </figure>
+        <div class="name"><strong>Rowan O'Wasp</strong> - rssi@my-company.ai</div>
+        <div class="title">[URGENT] CVE GDAL</div>
+        <div class="to">me@my-company.ai</div>
+    </header>
+    <hr>
+    <div class="body">
+Bonjour,<br>
+<p>
+Suite à notre audit de sécurité régulier et l'analyse de votre <strong>BOM</strong> (Bill of Materials), j'ai identifié que votre projet utilise <strong>GDAL 3.10.x</strong>.
+</p>
+<p>
+Une vulnérabilité <strong>critique</strong> vient d'être publiée :<br><br>
+🔴 <strong>CVE-2025-29480</strong> - Score CVSS : <strong class="score">9.8/10</strong><br><br>
+- Type : Buffer overflow dans le parser GeoTIFF<br>
+- Impact : Exécution de code arbitraire possible<br>
+- Exploitation : Active dans la nature<br>
+</p>
+<p>
+<a href="https://nvd.nist.gov/vuln/detail/CVE-2025-29480">Détails CVE</a>
+</p>
+<p>
+⚠️ <strong>Action requise</strong> : Mise à jour urgente ou mitigation
+</p>
+<p>
+Cordialement,<br>
+<strong>Rowan O'Wasp</strong> - RSSI
+</p>
+    </div>
+</div>
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>1.3 CVE-2025-29480</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3><code>CVE-2025-29480</code></h3>
+
+<div class="step step-0"><!-- begin step -->
+<p>💥 <strong>Buffer Overflow</strong>: Gestion mémoire défaillante</p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<p>📊 <strong>70%</strong> des CVEs critiques: problème mémoire</p>
+<ul>
+<li><a href="https://msrc.microsoft.com/blog/2019/07/a-proactive-approach-to-more-secure-code/">Microsoft: Proactive Approach to Secure Code</a></li>
+<li><a href="https://hacks.mozilla.org/2019/02/rewriting-a-browser-component-in-rust/">Mozilla: Rewriting Browser Component in Rust</a></li>
+<li><a href="https://www.chromium.org/Home/chromium-security/memory-safety/">Chromium Memory Safety</a></li>
+<li><a href="https://www.cisa.gov/news-events/news/urgent-need-memory-safety-software-products">CISA: Need for Memory Safety</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<p><strong>💭 Et si on pouvait éviter ça ?</strong></p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.4 GitHub issue</h2><article><style>
+.gh-issue {
+  font-size: 80%;
+  padding: 0.25em .5em;
+  background-color: white;
+  color: rgb(31, 35, 40);
+}
+.gh-issue header h2, .gh-issue h3 {
+  text-align: left;
+  font-family: var(--font-slide-body);
+  padding-top: .25em;
+}
+
+.gh-issue > header {
+  .tools {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: .5em;
+      border-radius: 2em;
+
+      border:none;
+      color: white;
+      background: rgb(31, 136, 61);
+      font-weight: bold;
+      padding: .25em .75em;
+      margin: .25em;
+      font-size: .5rem;
+    }
+  }
+  h2 {
+      font-size: 150%;
+      display: flex;
+      justify-content: space-between;
+  }
+}
+hr {
+  opacity: .6;
+  margin: .5em;
+}
+
+.gh-issue .body {
+  display: flex;
+  gap: 1em;
+  font-size: 80%;
+}
+
+.body figure {
+  margin: 0;
+}
+.body img {
+  width: 2em;
+  height: 2em;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 50%;
+  box-shadow: .1em .1em .1em rgba(0, 0, 0, .5);
+}
+
+.body ul {
+  list-style: disc;
+  margin: .5em 0;
+}
+
+.card {
+  border: 1px solid #54aeff66;
+  border-radius: .5em;
+  font-size: 90%;
+}
+.card header {
+  background: rgb(221, 244, 255);
+  border-bottom: thin solid #54aeff66;
+  display: flex;
+  gap: 1em;
+  padding: .25em .75em;
+  border-top-left-radius: .5em;
+  border-top-right-radius: .5em;
+}
+
+
+.card-body {
+  padding: .25em .75em;
+  h3 {
+    font-size: 110%; 
+  }
+}
+.labels {
+  display: flex;
+  gap: 1em;
+  font-size: 70%;
+}
+.labels > * {
+  border-radius: 2em;
+  color: white;
+  font-weight: bold;
+  padding: .25em .75em;
+  display: flex;
+  align-items: center;
+  margin: .25em;
+}
+.labels .security {
+  background: magenta;
+}
+.labels .first {
+  background: purple;
+}
+.labels .help {
+  background: forestgreen;
+}
+
+.create-at, .gh-id {
+  color: rgb(89, 99, 110);
+  margin: 0 1em;
+}
+</style>
+<div class="gh-issue">
+  <header>
+    <h2>Critical vulnerability CVE-2025-29480<span class="gh-id">#42</span></h2>
+    <div class="tools">
+      <button>
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZWZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtZG90LWljb24gbHVjaWRlLWNpcmNsZS1kb3QiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMSIvPjwvc3ZnPg==">
+          Open
+      </button>
+      <div class="labels">
+        <div class="security">Security</div>
+        <div class="first">Good first issue</div>
+        <div class="help">Need help</div>
+      </div>
+    </div>
+  </header>
+  <hr>
+  <div class="body">
+    <figure>
+        <img src="https://i.pravatar.cc/150?img=50">
+    </figure>
+    <div class="card">
+      <header>
+        <strong>ilovecrab</strong>
+        <span class="create-at">opened 2 months ago</span>
+      </header>
+      <div class="card-body">
+        <p>Consider migrating from GDAL to "safer" language</p>
+        <h3>Description</h3>
+        <hr>
+        <p>Given the recent <a href="https://www.cve.org/CVERecord?id=CVE-2025-29480">CVE-2025-29480</a> critical vulnerability in GDAL (CVSS 9.8), I believe we should seriously consider migrating to a Rust-based alternative or another "safer" language.
+        </p>
+        <h3>Problem</h3>
+        <hr>
+        <ul>
+          <li>Recurring memory safety issues in GDAL (15+ CVEs in last 2 years)</li>
+          <li>Complex dependency management</li>
+        </ul>
+        <h3>Proposed solution</h3>
+        <hr>
+        <p>Use existing crates referenced in <a href="https://georust.org/">GeoRust</a>, and add create missing one.</p>
+        <h3>Benefits</h3>
+        <hr>
+        <p>✅ Memory safety by design<br>✅ Better performance (no GC)<br>✅ Simpler deployment</p>
+        <p>🤔 Thoughts?</p>
+      </div>
+    </div>
+  </div>
+</div>
+</article></section></div><div class="toboggan-slide"><section class="no_title center standard"><h2>1.5 RIIR</h2><article><style>
+.riir {
+    text-align: center;
+    display: flex;
+    font-size: 300%;
+    text-shadow: 1px 1px white;
+}
+
+span.step {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .5s;
+    margin-right: .25em;
+    color: var(--accent);
+}
+
+span.step-done {
+    transform: scaleX(1);
+}
+
+</style>
+<h2 class="riir" lang="en">
+    <strong>R</strong><span class="step">ewrite</span>
+    <strong>I</strong><span class="step">t</span>
+    <strong>I</strong><span class="step">n</span>
+    <strong>R</strong><span class="step">ust</span>
+</h2>
+
+<div class="step step-0"><!-- begin step -->
+<ul>
+<li>
+<p><a href="https://transitiontech.ca/random/RIIR">/random/RIIR</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ansuz/RIIR">GitHub</a></p>
+</li>
+<li>
+<p><a href="https://youtu.be/arQqmwL6uXU?t=426">🎥 Pierre Desproges : Peut-on rire de tout ? | Archive INA</a></p>
+</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>1.6 RIIR IRL</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>RIIR <abbr title="In Real Life">IRL</abbr></h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🔌 Infrastructure</h4>
+<p><a href="https://discord.com/blog/why-discord-is-switching-from-go-to-rust">Discord</a>,
+<a href="https://www.figma.com/blog/rust-in-production-at-figma/">Figma</a>,
+<a href="https://qconsf.com/sf2016/sf2016/presentation/going-rust-optimizing-storage-dropbox.html">Dropbox</a></p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🛠️ Outils systèmes</h4>
+<p><a href="https://github.com/trifectatechfoundation/sudo-rs">sudo-rs</a>,
+<a href="https://github.com/uutils/coreutils">coreutils</a>,
+<a href="https://news.ycombinator.com/item?id=34588340">Fish Shell</a>,
+<a href="https://github.com/GitoxideLabs/gitoxide">gitoxide</a></p>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🗄️ Base de données</h4>
+<p><a href="https://www.influxdata.com/blog/meet-founders-who-rewrote-in-rust/">InfluxDB</a>,
+<a href="https://turso.tech/blog/introducing-limbo-a-complete-rewrite-of-sqlite-in-rust">Turso (sqlite)</a></p>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<p>...</p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/animal_nautille.svg),
+    url(./public/items/animal_poisson1.svg),
+    url(./public/items/animal_poisson3.svg),
+    url(./public/items/animal_poisson5.svg)
+    ;
+background-position:
+    103% -30%,
+    85% 75%,
+    26% 12%,
+    24% 57%,
+    50% 67%
+    ;
+background-size:
+    30vw,
+    15vw,
+    10vw,
+    10vw,
+    14vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>2. Pourquoi?</h2><article><style>
+article {
+    margin-left: 2em;
+}
+h2 {
+    font-size: 250%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+
+a {
+    font-size: 80%;
+}
+</style>
+<h2>Pourquoi en Rust ?</h2>
+
+<div class="step step-0"><!-- begin step -->
+<p><span lang="en">😻 Most loved/admired language</span><br>
+<a href="https://survey.stackoverflow.co/2016#technology-most-loved-dreaded-and-wanted">2016</a>,
+<a href="https://survey.stackoverflow.co/2017#most-loved-dreaded-and-wanted">2017</a>,
+<a href="https://survey.stackoverflow.co/2018#most-loved-dreaded-and-wanted">2018</a>,
+<a href="https://survey.stackoverflow.co/2019#most-loved-dreaded-and-wanted">2019</a>,
+<a href="https://survey.stackoverflow.co/2020#most-loved-dreaded-and-wanted">2020</a>,
+<a href="https://survey.stackoverflow.co/2021#technology-most-loved-dreaded-and-wanted">2021</a>,
+<a href="https://survey.stackoverflow.co/2022/#technology-most-loved-dreaded-and-wanted">2022</a>,
+<a href="https://survey.stackoverflow.co/2023/#section-admired-and-desired-programming-scripting-and-markup-languages">2023</a>,
+<a href="https://survey.stackoverflow.co/2024/technology#admired-and-desired">2024</a>,
+<a href="https://survey.stackoverflow.co/2025/technology#admired-and-desired">2025</a></p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.1 NIH</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3><abbr title="Not Invented Here">NIH</abbr></h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>⚙️ Bas-niveau</h4>
+<ul>
+<li><a href="https://www.c-language.org/"><strong>C</strong></a> : Cœur impératif et modèle mémoire</li>
+<li><a href="https://isocpp.org/"><strong>C++</strong></a> : <abbr title="Resource Acquisition Is Initialization">RAII</abbr>, smart-pointer, monomorphisation</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🐫 Fonctionnelle</h4>
+<ul>
+<li><a href="https://ocaml.org/"><strong>OCaml</strong></a>, <a href="https://smlfamily.github.io/"><strong>SML</strong></a> : Types algébriques, <span lan="en">pattern matching</span></li>
+<li><a href="https://www.haskell.org/"><strong>Haskell</strong></a> : Traits</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🎓 Académique</h4>
+<ul>
+<li><a href="https://cyclone.thelanguage.org/"><strong>Cyclone</strong></a> : Système de régions/lifetimes</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.2 Programmation système</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>Rust Vs langages bas niveaux</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🛟 Sécurité mémoire <sup>*</sup></h4>
+<ul>
+<li>Pas de crash mémoire</li>
+<li>Pas de <em>dangling pointers</em></li>
+<li>Pas de <em>double free</em></li>
+<li>Pas de <em>use after free</em></li>
+</ul>
+<br>
+<p>
+<sup>*</sup>: <small>en <em>safe Rust</em></small>
+</p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🧰 Outils</h4>
+<ul>
+<li><a href="https://doc.rust-lang.org/cargo/">cargo</a>, <a href="https://crates.io/">crates.io</a> : gestion de dépendances</li>
+<li><a href="https://github.com/rust-lang/rustfmt">rustfmt</a>, <a href="https://doc.rust-lang.org/clippy/">clippy</a>: format &amp; linter</li>
+<li>Mais aussi, <a href="https://github.com/rust-lang/miri">miri</a>, <a href="https://rustsec.org/">rustsec</a>, ...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.3 Contrôle sans GC</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>Rust Vs langages à gestion de mémoire</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🏎️ Performance</h4>
+<ul>
+<li>Pas de <abbr title="ramasse miettes">GC</abbr></li>
+<li>Abstractions à coût nul</li>
+<li>📈 meilleur performance moyenne, p99</li>
+<li>📉 moins de mémoire</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🎛️ Contrôle sur la gestion mémoire</h4>
+<ul>
+<li>Choix d'allocation: pile ou tas</li>
+<li>Choix de pattern d'allocation: arena, slab, ...</li>
+<li>Choix de allocateur: jemalloc, mimalloc, ...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.4 Sécurité du langage</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>Autre avantages</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🛟 Système de typage</h4>
+<ul>
+<li>Type de données algébrique, <code>trait</code></li>
+<li><span lang="en">Pattern matching</span></li>
+<li><code>Option</code> et <code>Result</code></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🧵 Concurrence et mutations sans craintes</h4>
+<ul>
+<li><span lang="en">Thread safety</span> à la compilation (pas de <span lang="en">data race</span>)</li>
+<li>Sémantique de l'emprunt <code>&amp;T</code>, d'emprunt exlcusif <code>&amp;mut T</code>,</li>
+<li>ou transmition <code>T</code></li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.5 Quotidien</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>Rust au quotidien</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🦊 Navigateurs</h4>
+<p>Firefox, Chrome</p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>☁️ Cloud</h4>
+<p><abbr title="Amazon Web Service">AWS</abbr>, Azure, Cloudflare, ...</p>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🐧 OS &amp; Mobile</h4>
+<p>Linux, Android, Fushia, Windows, ...</p>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<h4>💻 Outils</h4>
+<p>uv, ruff, biome, oxlint, ...</p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.6 Quotidien</h2><article><h3>🥇 Rust - Pros/cons</h3>
+
+<div class="step step-0"><!-- begin step -->
+<div style="display:grid; gap: 1rem; grid-template-columns: 1fr 1fr;">
+<div>
+    <header class="block" style="--bg: var(--color-success); --fg: white;">Pour</header>
+    <ul>
+      <li>plus de sécurité</li>
+      <li>de meilleur performances</li>
+      <li>outillage plus simple</li>
+      <li>moins de charge cognitive</li>
+      <li>plus de confiance sur le code</li>
+      <li>écosystème de qualité</li>
+      <li>dirigé par la communauté</li>
+    </ul>
+</div>
+<div>
+    <header class="block" style="--bg: var(--color-error); --fg: white;">Contre</header>
+    <ul>
+      <li>long temps de compilation</li>
+      <li>courbe d'apprentissage</li>
+      <li>maturité de l'écosystème</li>
+      <li>limitation de la communauté</li>
+      <li></li>
+      <li></li>
+    </ul>
+</div>
+</div>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/animal_poissonglobe.svg),
+    url(./public/items/animal_poisson2.svg),
+    url(./public/items/animal_poisson4.svg),
+    url(./public/items/animal_etoiledemer.svg)
+    ;
+background-position:
+    103% -30%,
+    86% 75%,
+    21% 12%,
+    23% 84%,
+    52% 35%
+    ;
+background-size:
+    30vw,
+    15vw,
+    10vw,
+    10vw,
+    14vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>3. Quoi ?</h2><article><style>
+article {
+    margin-left: 2em;
+}
+h2 {
+    font-size: 250%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+</style>
+<h2>Que peut on faire avec Rust?</h2>
+</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width:100%; background: url(./public/yak.webp); background-size: cover;"><h2>3.1 Yak-Shaving</h2><article><style>
+.razor {
+    opacity: 0;
+    font-size: 25vh;
+    transition: opacity 1s;
+    text-align: right;
+    margin-right: 1em;
+    animation: 1s infinite alternate light;
+}
+.step-done .razor {
+    opacity: 1;
+}
+
+@keyframes light {
+    from {
+        text-shadow:0 0 0 #fff;
+    }
+    to {
+        text-shadow:0 0 .2em #fff;
+    }
+}
+
+
+.credit {
+    position: absolute;
+    bottom:0;
+    left: 0;
+    right:0;
+    text-align: center;
+    color: white;
+    opacity: .4;
+}
+
+</style>
+<div class="credit">
+Photo by <a href="https://unsplash.com/@p_kuzovkova?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Polina Kuzovkova</a> on <a href="https://unsplash.com/photos/brown-yak-on-green-grass-field-during-daytime-PQgD2Mjrjpw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+</div>
+
+<div class="step step-0"><!-- begin step -->
+<div class="razor">🪒</div>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>3.2 CLI</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>Outils <abbr title="Command Line Interface">CLI</abbr></h3>
+<p>📖 <a href="https://rust-cli.github.io/book/index.html">Command line apps in Rust</a></p>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li>Arguments: <a href="https://github.com/clap-rs/clap">clap</a>, <a href="https://github.com/google/argh">argh</a>, <a href="https://github.com/razrfalcon/pico-args">pico-args</a>, ... <a href="https://github.com/rosetta-rs/argparse-rosetta-rs">benchmark</a></li>
+<li>Prompt: <a href="https://github.com/console-rs/dialoguer">dialoguer</a>, <a href="https://github.com/mikaelmello/inquire">inquire</a>, <a href="https://github.com/jdx/demand">demand</a>, ...</li>
+<li><a href="https://github.com/nukesor/comfy-table">comfy-table</a>, <a href="https://github.com/console-rs/indicatif">indicatif</a>, <a href="https://github.com/fgribreau/spinners">spinners</a>, <a href="https://github.com/owo-colors/owo-colors">owo-colors</a>, ...</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://github.com/BurntSushi/ripgrep">ripgrep (rg)</a>: remplace <code>grep</code></li>
+<li><a href="https://github.com/sharkdp/fd">fd</a>: remplace <code>find</code>, plus rapide</li>
+<li><a href="https://github.com/sharkdp/bat">bat</a> : <code>cat</code> avec des ailes</li>
+<li><a href="https://github.com/ogham/exa">exa</a>,<a href="https://github.com/lsd-rs/lsd">lsd</a>, <a href="https://github.com/eza-community/eza">eza</a> : <code>ls</code> moderne</li>
+<li><a href="https://starship.rs/">starship</a> : prompt shell personnalisable</li>
+<li>...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.3 Serveur backend</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>Backend, Middleware</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li>Fondation: <a href="https://github.com/tokio-rs/tracing">tokio</a>, <a href="https://github.com/serde-rs/serde">serde</a>, <a href="https://github.com/tokio-rs/tracing">tracing</a>, <a href="https://github.com/seanmonstar/reqwest">reqwest</a>, <a href="https://github.com/tower-rs/tower">tower</a>, ...</li>
+<li>Serveur: <a href="https://github.com/tokio-rs/axum">axum</a>, <a href="https://github.com/actix/actix-web">actix-web</a>, <a href="https://github.com/hyperium/tonic">tonic</a>, <a href="https://github.com/async-graphql/async-graphql">async-graphql</a> ...</li>
+<li>Accès DB: <a href="https://github.com/launchbadge/sqlx">sqlx</a>, <a href="https://github.com/diesel-rs/diesel">diesel</a>, <a href="https://github.com/SeaQL/sea-orm">SeaORM</a>, <a href="https://github.com/mongodb/mongo-rust-driver">mongodb</a> ...</li>
+<li>Cloud: <a href="https://github.com/apache/opendal">OpenDAL</a>, <a href="https://github.com/linkerd/linkerd2-proxy">linkerd2-proxy</a>, <a href="https://github.com/cloudflare/pingora">Pinagora</a>, SDK cloud, ...</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h3>🪜 Scaffolding</h3>
+<ul>
+<li><a href="https://loco.rs/">🚂 Loco</a></li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.4 Web avec WASM</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3><abbr title="Web Assembly">WASM</abbr></h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li><a href="https://leptos.dev/">Leptos</a>: full-stack comme React</li>
+<li><a href="https://dioxuslabs.com/">Dioxus</a> : cross-platform (web/desktop/mobile)</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<ul>
+<li><a href="https://www.youtube.com/watch?v=OPKFfHmMuqg">🎥 Et si on écrivait nos Web Components en Rust ?</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://graphite.rs/">✏️ graphite.rs</a></li>
+<li><a href="https://github.com/ironcalc/IronCalc">IronCalc</a></li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.5 Client lourd</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>Application desktop</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🍬 UI Native</h4>
+<ul>
+<li><a href="https://slint.rs/">slint</a></li>
+<li><a href="https://www.gpui.rs/">gpui</a></li>
+<li><a href="https://github.com/iced-rs/iced">Iced</a></li>
+<li><a href="https://github.com/linebender/xilem/">Xilem</a>, ...</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🕸️ Web Based</h4>
+<ul>
+<li><a href="https://v2.tauri.app/">Tauri</a></li>
+<li><a href="https://dioxuslabs.com/">Dioxus</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://zed.dev/">Zed</a>: <abbr title="Integrated Development Environment">IDE</abbr></li>
+<li><a href="https://system76.com/cosmic">COSMIC desktop</a>: dans <a href="https://system76.com/pop/">Pop!_OS</a></li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.6 TUI</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3><abbr title="Terminal User Interface">TUI</abbr></h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li><a href="https://ratatui.rs/">🐀 Ratatui</a> : framework TUI moderne</li>
+<li><a href="https://github.com/crossterm-rs/crossterm">Crossterm</a> : terminal cross-platform</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://github.com/atuinsh/atuin">🐢 atuin</a>: historique du shell</li>
+<li><a href="https://yazi-rs.github.io/">Yazi</a>: gestionnaire de fichier</li>
+<li><a href="https://github.com/gitui-org/gitui">Gitui</a> : Git UI</li>
+<li><a href="https://github.com/Julien-cpsn/ATAC">ATAC</a>: API client (Postman)</li>
+<li><a href="https://github.com/MAIF/yozefu/">yozefu</a>: explore Kafka cluster</li>
+<li><a href="https://github.com/ClementTsang/bottom">Bottom (btm)</a> : monitoring process</li>
+<li><a href="https://zellij.dev/">Zellij</a>: multiplexeur tmux-like</li>
+<li>...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>3.7 Diagram</h2><article><style>
+figure {
+    justify-content: center;
+    display: flex;
+    margin: 0;
+}
+</style>
+<figure>
+    <img alt="Toboggan" src="./public/diagram.webp">
+</figure>
+</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/animal_meduse.svg),
+    url(./public/items/animal_poisson1.svg),
+    url(./public/items/animal_poisson2.svg),
+    url(./public/items/animal_nautille.svg)
+    ;
+background-position:
+    103% -30%,
+    86% 75%,
+    21% 12%,
+    23% 84%,
+    52% 35%
+    ;
+background-size:
+    30vw,
+    15vw,
+    10vw,
+    10vw,
+    14vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>4. Encore plus</h2><article><style>
+article {
+    margin-left: 2em;
+}
+h2 {
+    font-size: 250%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+</style>
+<h2>Encore plus</h2>
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.1 Embarqué</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>ESP32-S3 - spec. hardware</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>⚙️ CPU &amp; mémoire</h4>
+<ul>
+<li>CPU:  Dual-Core Xtensa® 32bit LX7 up to 240 MHz</li>
+<li>SRAM: 512 KB, ROM: 384 KB, PSRAM: Octal SPI, 16 MB, 120 MHz</li>
+<li>External Flash: Quad SPI, 16 MB</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>📡 Sans fil</h4>
+<ul>
+<li>Wi-Fi: 2.4 GHz, IEEE 802.11b/g/n</li>
+<li>Bluetooth® LE: Bluetooth® 5 LE and Bluetooth® mesh</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>📺 Écran</h4>
+<ul>
+<li>Display Type: 2.4-inch LCD</li>
+<li>SPI,  240 x 320 pixels, 40 MHz</li>
+<li>Driver IC: ILI9342C
+...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.2 Embarqué</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>Embarqué &amp; IoT</h3>
+<ul>
+<li>📖 <a href="https://docs.rust-embedded.org/book/">The embedded Rust Book</a></li>
+<li>📖 <a href="https://esp32.implrust.com/">impl Rust for ESP32</a></li>
+<li><a href="https://ferrocene.dev/en/">Ferrocene</a>: Rust pour les systèmes critique</li>
+</ul>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li><a href="https://github.com/embassy-rs/embassy">embassy</a> : async/await embedded</li>
+<li><a href="https://github.com/embedded-graphics/embedded-graphics">embedded-graphics</a>, <a href="https://github.com/esp-rs/embedded-svc">embedded-svc</a>, <a href="https://github.com/rust-embedded/embedded-hal">embedded-hal</a> : abstraction hardware cross-platform</li>
+<li><a href="https://github.com/rust-embedded/heapless">heapless</a>, <a href="https://github.com/knurling-rs/defmt">defmt</a>, ...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.3 Mobile</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>📱 Mobile</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li><a href="https://mozilla.github.io/uniffi-rs/latest/">UniFFI</a>: binding avec Swift, Kotlin, ...</li>
+<li><a href="https://cjycode.com/flutter_rust_bridge/">Flutter Rust Bridge</a></li>
+<li>ou <a href="https://v2.tauri.app/">Tauri</a>, <a href="https://dioxuslabs.com/">Dioxus</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><strong>Proton mail</strong>: <a href="https://proton.me/blog/new-mail-apps">https://proton.me/blog/new-mail-apps</a></li>
+<li><strong>Signal</strong>: protocole crypto partagé</li>
+<li><strong>1Password</strong>: cryptographie Rust</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.4 PyO3</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>🐍 Interoperabilité avec Python</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📦 Crates</h4>
+<ul>
+<li><a href="https://pyo3.rs/">PyO3</a>: bindings Rust ↔ Python</li>
+<li><a href="https://www.maturin.rs/">Maturin</a> : packaging</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://pola.rs/">Polars</a>, <a href="https://datafusion.apache.org/">datafusion</a>: big data</li>
+<li><a href="https://docs.pydantic.dev/latest/">Pydantic</a>: validation des données</li>
+<li><a href="https://github.com/huggingface/tokenizers">tokenizers</a>: ML Tokenizers</li>
+<li><a href="https://github.com/ijl/orjson">orjson</a>: JSON</li>
+<li>...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.5 Interop</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>Rust &amp; autres écosystèmes</h3>
+
+<div class="step step-0"><!-- begin step -->
+<ul>
+<li><strong>C</strong>: via <a href="https://doc.rust-lang.org/nomicon/ffi.html">FFI</a></li>
+<li><strong>C++</strong>: <a href="https://cxx.rs/">cxx</a>, <a href="https://hkalbasi.github.io/zngur/">zngur</a>, <a href="https://github.com/google/crubit">crubit</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<ul>
+<li><strong>Web</strong>: via Web Assembly</li>
+<li><strong>Swift</strong> &amp; <strong>Kotlin</strong>: via <a href="https://mozilla.github.io/uniffi-rs/latest/">UniFFI</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<ul>
+<li><strong>NodeJS</strong>: <a href="https://neon-rs.dev/">neon</a>, <a href="https://napi.rs/">napi</a>, <a href="https://deno.com/">Deno</a></li>
+<li><strong>JVM</strong>: <a href="https://akilmohideen.github.io/java-rust-bindings-manual/title.html">FFM API - Java Bindings for Rust</a>, <a href="https://github.com/giovanniberti/robusta">robusta</a></li>
+<li><strong>Ruby</strong>: <a href="https://github.com/matsadler/magnus">magnus</a></li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>4.6 Diagram</h2><article><style>
+figure {
+    justify-content: center;
+    display: flex;
+    margin: 0;
+}
+</style>
+<figure>
+    <img alt="Toboggan" src="public/diagram2.webp">
+</figure>
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.7 Et le reste</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>On peut presque tout faire</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🎙️ Moteurs de présentation</h4>
+<ul>
+<li>🛝 toboggan<br><a href="https://github.com/ilaborie/toboggan">https://github.com/ilaborie/toboggan</a>,<br><a href="https://github.com/ilaborie/toboggan-esp32">https://github.com/ilaborie/toboggan-esp32</a></li>
+<li><a href="https://github.com/mfontanini/presenterm">👉 presenterm</a>: dans le terminal</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>Ou encore</h4>
+<ul>
+<li>🕹️ moteurs de jeux,</li>
+<li>🔐 crypto,</li>
+<li>🤖 AI,</li>
+<li>...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/coquillage2.svg),
+    url(./public/items/animal_poisson1.svg),
+    url(./public/items/animal_poisson4.svg),
+    url(./public/items/animal_poisson5.svg)
+    ;
+background-position:
+    103% -30%,
+    86% 75%,
+    21% 12%,
+    23% 84%,
+    52% 35%
+    ;
+background-size:
+    30vw,
+    15vw,
+    10vw,
+    10vw,
+    19vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>5. Quand ?</h2><article><style>
+article {
+    margin-left: 2em;
+}
+h2 {
+    font-size: 250%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+</style>
+<h2>Bilan</h2>
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>5.1 RIIR ou ne pas RIIR?</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>RIIR ou ne pas RIIR?</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>💰 Quel <abbr title="Return On Investment">ROI</abbr> ?</h4>
+<div class="two-columns" style="margin-top: 1em;">
+<div>
+    <header class="block" style="--bg: var(--color-success); --fg: white;">👍 Oui</header>
+    <div>si pas de compromis sur</div>
+    <ul>
+        <li>la sécurité</li>
+        <li>la performance</li>
+        <li>l'efficacité</li>
+    </ul>
+</div>
+<div>
+    <header class="block" style="--bg: var(--color-error); --fg: white;">👎 Non</header>
+    <div>si</div>
+    <ul>
+        <li>pas de problèmes</li>
+        <li>pas le temps de réécrire</li>
+        <li>pas les compétences</li>
+    </ul>
+</div>
+</div>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🎯 Stratégie</h4>
+<ul>
+<li>Intégrer Rust dans les <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Deployement">CD</abbr></li>
+<li>Former progressivement les équipes</li>
+<li>Commencer petit</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>5.2 Et si on pouvait...</h2><article><h3>🙌 Projet parallèles</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>💡 Occasion de faire différent</h4>
+<ul>
+<li><a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> : ~grep, mais amélioré (10x)</li>
+<li><a href="https://github.com/jj-vcs/jj">jj (Jujutsu)</a> : <abbr title="Distributed version control systems">DVCS</abbr> compatible avec Git</li>
+<li><a href="https://helix-editor.com/">Helix</a>, <a href="https://zed.dev/">Zed</a>: éditeurs de code</li>
+<li><a href="https://www.nushell.sh/">Nushell</a>: shell</li>
+<li><a href="https://typst.app/">Typst</a>: LaTex moderne</li>
+<li>...</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title step-line-through spread-steps part" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/animal_meduse.svg),
+    url(./public/items/animal_poisson4.svg),
+    url(./public/items/animal_poissonglobe.svg),
+    url(./public/items/animal_poisson1.svg)
+    ;
+background-position:
+    103% -30%,
+    86% 75%,
+    21% 12%,
+    23% 60%,
+    52% 38%
+    ;
+background-size:
+    30vw,
+    15vw,
+    10vw,
+    10vw,
+    12vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat
+    ;
+"><h2>6. Conclusion</h2><article><style>
+article {
+    margin-left: 2em;
+}
+h2 {
+    font-size: 250%;
+    padding-top: 2em;
+    width: 100%;
+    text-align: left;
+}
+
+.step-1 h2 {
+    color: var(--accent2);
+}
+</style>
+
+<div class="step step-0"><!-- begin step -->
+<h2>Nouveau project en Rust ?</h2>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h2>Y a-t-il une bonne raison pour<br> ne pas le faire ?</h2>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title step-line-through spread-steps standard"><h2>6.1 Constat</h2><article><style>
+article {
+    margin-bottom: 2em;
+}
+</style>
+<h3>Pourquoi ne fait-on pas de Rust?</h3>
+
+<div class="step step-0"><!-- begin step -->
+<p>🪲 On veut des bugs, des problèmes de sécurité</p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<p>🐌 On ne cherche pas la rapidité, l'efficacité</p>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<p>🐣 Trop jeune ? écosystème ?</p>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<p>🍐 On ne sait pas faire de Rust.</p>
+</div><!-- end step -->
+
+<div class="step step-4"><!-- begin step -->
+<div style="font-size: 200%; display: flex; justify-content: center;">
+    ➡ 😔 Ce n'est pas un choix technique
+</div>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin: 1rem 1rem 0; width: calc(100% - 2rem); min-height: calc(100% - 2rem);"><h2>6.2 Me</h2><article><style>
+h3 {
+    flex: 0 0 auto;
+}
+.auto-carousel {
+    animation: 15s infinite carousel;
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+    box-shadow: 1px 1px .5em rgba(0,0,0,.5);
+    margin: .5em;
+    width: calc(100% - 7em);
+    margin: 1em 3em 3em 3em;
+}
+
+@keyframes carousel {
+    from {
+        background: url('public/d1.webp');
+        background-size: cover;
+    }
+    25% {
+        background: url('public/d2.webp');
+        background-size: cover;
+    }
+    50% {
+        background: url('public/d3.webp');
+        background-size: cover;
+    }
+    75% {
+        background: url('public/d4.webp');
+        background-size: cover;
+    }
+    100% {
+        background: url('public/d5.webp');
+        background-size: cover;
+    }
+}
+</style>
+<h3><strong>Igor Laborie</strong><br>Founding Engineer @ <a href="https://www.darwindata.ai/">Darwin Data</a></h3>
+<div class="auto-carousel"></div>
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>6.3 Startup</h2><article><style>
+article {
+  margin-bottom: 2em;
+}
+</style>
+<h3>🌱 Rust en Startup</h3>
+
+<div class="step step-0"><!-- begin step -->
+<ul>
+<li>🚅 Vélocité à moyen terme vs <abbr title="Proof of Concept">PoC</abbr></li>
+<li>🪲 Moins de bugs, maintenance plus facile</li>
+<li>💸 Moins de coûts</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<ul>
+<li>&quot;🚀 Blazing fast&quot;, aspect marketing</li>
+<li>Profitez de l'image positive sécurité, efficacité, performance de Rust</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>6.4 action</h2><article><style>
+
+.rustacean {
+    width: 3em;
+    margin-top: 0;
+}
+
+.action {
+    font-size: 200%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+<h3>⛓️‍💥 Agir plutôt que subir</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>📚 Apprendre</h4>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🏗️ Construire</h4>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>💬 Partager, 🐝 Essaimer</h4>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<div class="action">
+    <figure class="rustacean">
+        <img src="./public/items/animal_crabe.svg">
+    </figure>
+    <strong>Devenez rustacés !</strong>
+</div>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide"><section class="no_title slide-end standard" style="margin-top: 0;
+min-height: 100%;
+width: 100%;
+overflow: hidden;
+background-image:
+    url(./public/items/forme7.svg),
+    url(./public/items/animal_meduse.svg)
+    ;
+background-position:
+    107% -40%,
+    7% 27%
+    ;
+background-size:
+    30vw,
+    15vw
+    ;
+background-repeat:
+    no-repeat,
+    no-repeat
+    ;
+"><h2>6.5 Citation</h2><article><style>
+.slide-end article {
+  padding-top: 2em;
+  justify-content: center;
+  gap: 2em;
+}
+
+.quote {
+    display: flex;
+    flex-direction: column;
+    max-width: 60vw;
+    margin: 0 auto;
+    text-shadow: 1px 1px white;
+}
+
+blockquote {
+  --icon-open: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><rect width="100%" height="100%" fill="yellow" fill-opacity="0" /><text y=".8em" font-size="90" fill="rgba(104, 170, 175, 1)" fill-opacity=".2">❝</text></svg>');
+  --color: currentColor;
+  float: inline-end;
+  margin-inline: 1em -3em;
+  margin-block-start: -1rem;
+  text-wrap: balance;
+  font-family: var(--font-sans);
+  hyphens: manual;
+  color: oklab(from var(--color) clamp(0, l, 0.52) a b);
+  background: var(--icon-open) no-repeat 0 0 / auto min(8em, 80%);
+  font-weight: 500;
+  &:hover {
+    --color: var(--color-accent);
+  }
+
+  p {
+    font-size: 200%;
+    line-height: 1.5;
+    margin-block: .2em 1em;
+    margin: 0;
+  }
+  cite {
+    font-weight: 500;
+  }
+}
+
+.step-0 {
+  display: flex;
+flex-direction: column;
+}
+
+.table {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  justify-items: center;
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+  }
+
+  img {
+    height: 25vh;
+  }
+}
+
+</style>
+<div class="quote">
+  <blockquote>
+    <p>Soyez donc résolus à ne plus<br> servir et vous serez libres.</p>
+    <footer>
+      — Étienne de La Boétie
+      - <cite>Discours de la servitude volontaire (1576)</cite>
+    </footer>
+  </blockquote>
+</div>
+<div class="table">
+  <div class="links">
+    <a href="https://github.com/ilaborie/riir">Source Slides</a>
+    <a href="https://github.com/ilaborie/toboggan">Source Toboggan</a>
+    <a href="https://github.com/ilaborie/toboggan-esp32">Source Toboggan ESP32</a>
+  </div>
+  <div>
+    <img src="./public/qr-code.svg" alt="https://openfeedback.io/devfest-toulouse-2025/2025-11-13/949153">
+  </div>
+</div>
+</article></section></div>
+    </main>
+</body>
+
+</html>

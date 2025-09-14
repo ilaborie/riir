@@ -1,0 +1,20 @@
+[env]
+# ⚠️ need to be visible for the esp32 connection
+TOBOGGAN_HOST = "0.0.0.0"
+
+[tools]
+"cargo:bacon" = "latest"
+"npm:@biomejs/biome" = "latest"
+"npm:svgo" = "latest"
+
+[tasks.build]
+description = "Build the riir.toml file"
+run = "toboggan-cli --output riir.toml ./slides/ && toboggan-cli --output index.html ./slides/"
+
+[tasks.dev]
+description = "Serve and watch the presentation"
+run = "RUST_LOG=info toboggan-server --public-dir ./public/ --watch ./riir.toml"
+
+[tasks.run]
+description = "Serve the presentation"
+run = "RUST_LOG=warn toboggan-server --public-dir ./public/ ./riir.toml"

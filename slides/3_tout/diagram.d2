@@ -1,0 +1,49 @@
+title: Toboggan {
+  near: bottom-center
+  shape: text
+  style: {
+    font-size: 29
+    bold: true
+    underline: true
+  }
+}
+
+# grid-rows: 3
+# grid-columns: 3
+
+toboggan-server: {
+  icon: https://icons.terrastruct.com/dev%2Frust.svg
+  shape: cloud
+}
+
+toboggan-cli: {
+  label.near: border-top-center
+  icon: https://icons.terrastruct.com/dev%2Frust.svg
+}
+
+toboggan-web: {
+  icon: https://icons.terrastruct.com/dev%2Ftypescript.svg
+  icon.near: outside-top-left
+  label.near: border-top-center
+  toboggan-wasm: {
+    icon: https://icons.terrastruct.com/dev%2Frust.svg
+    style: {
+      stroke-width: 0
+    }
+  }
+}
+
+toboggan-desktop: {
+  label.near: border-top-center
+  icon: https://icons.terrastruct.com/dev%2Frust.svg
+}
+
+toboggan-tui: {
+  label.near: border-top-center
+  icon: https://icons.terrastruct.com/dev%2Frust.svg
+}
+
+toboggan-cli -> toboggan-server: "\$ toboggan-cli ./slides/ riir.toml" {style: {stroke-dash: 5}}
+toboggan-web.toboggan-wasm <-> toboggan-server
+toboggan-desktop -> toboggan-server
+toboggan-tui <-> toboggan-server

@@ -1,0 +1,42 @@
+:root {
+	--bg: #eee2ce;
+	--fg: #0f384f;
+	--accent: #68aaaf;
+	--accent2: #c25c17;
+	--accent3: #e4a411;
+	--font-slide-title:
+		"Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+	--font-slide-body:
+		"Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+	--font-slide-mono:
+		"MonaspiceNe Nerd Fon", "JetBrainsMono Nerd Font",
+		"Inconsolata Nerd Font Mono", monospace;
+}
+
+.toboggan-slide {
+	.riir .step {
+		transform: scaleX(1);
+	}
+
+	header.block {
+		clip-path: none;
+	}
+
+	.razor {
+		opacity: 1;
+	}
+
+	.step-line-through .step:not(:last-child) {
+		opacity: 0.9;
+		text-decoration: line-through 0.25em;
+	}
+}
+
+@media print {
+	.gh-issue {
+		font-size: 24px;
+	}
+	.toboggan-slide section {
+		overflow: hidden;
+	}
+}
