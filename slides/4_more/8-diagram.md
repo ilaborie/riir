@@ -1,5 +1,5 @@
 +++
-title = "Diagram"
+title = "Diagram 2"
 classes = ["no_title"]
 style = "margin-top: 0; min-height: 100%; width: 100%;"
 +++

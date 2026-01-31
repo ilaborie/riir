@@ -50,7 +50,7 @@ h2 {
 }
 </style>
 
-## Que peut on faire avec Rust?
+## Que peut-on faire avec Rust ?
 
 <!-- notes -->
 

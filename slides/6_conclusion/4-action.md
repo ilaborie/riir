@@ -1,5 +1,5 @@
 +++
-title = "action"
+title = "Action"
 classes = ["no_title", "spread-steps"]
 +++
 

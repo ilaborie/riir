@@ -68,7 +68,7 @@ classes = ["no_title"]
     
     .score {
         color: firebrick;
-        font-family: mono;
+        font-family: font-family: var(--font-slide-mono);
     }
 }
 </style>

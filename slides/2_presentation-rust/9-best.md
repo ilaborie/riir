@@ -1,5 +1,5 @@
 +++
-title= "Quotidien"
+title= "Pro/Con"
 classes = ["no_title", "spread-steps"]
 +++
 

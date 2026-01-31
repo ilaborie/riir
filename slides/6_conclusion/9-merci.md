@@ -1,5 +1,5 @@
 +++
-title = "Citation"
+title = "Merci"
 classes = ["no_title", "slide-end"]
 
 style = """
@@ -108,9 +108,6 @@ flex-direction: column;
     <a href="https://github.com/ilaborie/riir">Source Slides</a>
     <a href="https://github.com/ilaborie/toboggan">Source Toboggan</a>
     <a href="https://github.com/ilaborie/toboggan-esp32">Source Toboggan ESP32</a>
-  </div>
-  <div>
-    <img src="./public/qr-code.svg" alt="https://openfeedback.io/devfest-toulouse-2025/2025-11-13/949153">
   </div>
 </div>
 

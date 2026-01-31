@@ -68,7 +68,7 @@ a {
 [2022](https://survey.stackoverflow.co/2022/#technology-most-loved-dreaded-and-wanted),
 [2023](https://survey.stackoverflow.co/2023/#section-admired-and-desired-programming-scripting-and-markup-languages),
 [2024](https://survey.stackoverflow.co/2024/technology#admired-and-desired),
-[2025](https://survey.stackoverflow.co/2025/technology#admired-and-desired)
+[2025](https://survey.stackoverflow.co/2025/technology#2-programming-scripting-and-markup-languages)
 
 <!-- notes -->
 

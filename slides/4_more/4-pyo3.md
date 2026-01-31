@@ -1,5 +1,5 @@
 +++
-title = "PyO3"
+title = "Python"
 classes = ["no_title", "spread-steps"]
 +++
 
