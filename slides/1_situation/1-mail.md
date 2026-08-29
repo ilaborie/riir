@@ -6,7 +6,7 @@ classes = ["no_title"]
 <style>
 #icon-mail {
     margin: auto 0;
-    width: 20vmin;
+    width: 6.75rem;
     position: relative;
     align-self: center;
 }
@@ -33,6 +33,6 @@ classes = ["no_title"]
 </figure>
 
 
-<!-- notes-->
+<!-- notes -->
 
 Lundi matin, vous avez un email

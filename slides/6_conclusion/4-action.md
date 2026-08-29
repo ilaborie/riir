@@ -5,9 +5,16 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 
+/* Chrome's UA margin for `figure` is a fixed 40px, which alone would not follow
+   the deck's viewport scale (see public/style.css); 1.25rem is that same 40px on
+   the 1920x1080 canvas. */
+figure {
+    margin-inline: 1.25rem;
+}
+
 .rustacean {
     width: 3em;
-    margin-top: 0;
+    margin-block: 0;
 }
 
 .action {
@@ -31,6 +38,8 @@ classes = ["no_title", "spread-steps"]
 <!-- pause -->
 
 #### 💬 Partager, 🐝 Essaimer
+
+- Rust Toulouse: <https://www.meetup.com/rust-community-toulouse/>
 
 <!-- pause -->
 
@@ -61,7 +70,7 @@ classes = ["no_title", "spread-steps"]
 - Rassembler des développeurs intéressés
 - Créer une communauté locale
 
-🏢 Choisir strategiquement :
+🏢 Choisir stratégiquement :
 - Rejoindre des entreprises qui utilisent Rust
 - Influencer les décisions techniques
 - Proposer Rust pour nouveaux projets

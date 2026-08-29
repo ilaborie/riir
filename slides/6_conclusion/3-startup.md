@@ -5,7 +5,8 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 

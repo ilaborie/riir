@@ -13,10 +13,10 @@ classes = ["no_title", "spread-steps"]
     <header class="block" style="--bg: var(--color-success); --fg: white;">Pour</header>
     <ul>
       <li>plus de sécurité</li>
-      <li>de meilleur performances</li>
+      <li>de meilleures performances</li>
       <li>outillage plus simple</li>
-      <li>moins de charge cognitive</li>
       <li>plus de confiance sur le code</li>
+      <li>moins de charge cognitive</li>
       <li>écosystème de qualité</li>
       <li>dirigé par la communauté</li>
     </ul>

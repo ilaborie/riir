@@ -5,7 +5,8 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 
@@ -17,7 +18,7 @@ article {
 
 - Pas de <abbr title="ramasse miettes">GC</abbr>
 - Abstractions à coût nul
-- 📈 meilleur performance moyenne, p99
+- 📈 meilleures performances moyennes, p99
 - 📉 moins de mémoire
 
 <!-- pause -->
@@ -26,7 +27,7 @@ article {
 
 - Choix d'allocation: pile ou tas
 - Choix de pattern d'allocation: arena, slab, ...
-- Choix de allocateur: jemalloc, mimalloc, ...
+- Choix de l'allocateur: jemalloc, mimalloc, ...
 
 <!-- notes -->
 

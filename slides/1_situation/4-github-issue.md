@@ -34,6 +34,13 @@ classes = ["no_title"]
       padding: .25em .75em;
       margin: .25em;
       font-size: .5rem;
+
+      /* The inline SVG carries a 24px intrinsic size, which would stay 24px at
+         every resolution — size it against the text instead. */
+      img {
+        width: 1.5em;
+        height: 1.5em;
+      }
     }
   }
   h2 {
@@ -67,6 +74,9 @@ hr {
 .body ul {
   list-style: disc;
   margin: .5em 0;
+  /* The slide stylesheet zeroes list padding; put back enough for the markers to
+     sit inside the card. 1.25rem is the 40px browsers use, on the deck canvas. */
+  padding-inline-start: 1.25rem;
 }
 
 .card {
@@ -123,7 +133,7 @@ hr {
 
 <div class="gh-issue">
   <header>
-    <h2>Critical vulnerability CVE-2025-29480<span class="gh-id">#42</span></h2>
+    <h2>Critical vulnerability CVE-2026-4738<span class="gh-id">#42</span></h2>
     <div class="tools">
       <button>
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZWZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtZG90LWljb24gbHVjaWRlLWNpcmNsZS1kb3QiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMSIvPjwvc3ZnPg==">
@@ -139,7 +149,7 @@ hr {
   <hr>
   <div class="body">
     <figure>
-        <img src="https://i.pravatar.cc/150?img=50">
+        <img src="./public/avatar-ilovecrab.jpg">
     </figure>
     <div class="card">
       <header>
@@ -150,12 +160,12 @@ hr {
         <p>Consider migrating from GDAL to "safer" language</p>
         <h3>Description</h3>
         <hr>
-        <p>Given the recent <a href="https://www.cve.org/CVERecord?id=CVE-2025-29480">CVE-2025-29480</a> critical vulnerability in GDAL (CVSS 9.8), I believe we should seriously consider migrating to a Rust-based alternative or another "safer" language.
+        <p>Given the recent <a href="https://www.cve.org/CVERecord?id=CVE-2026-4738">CVE-2026-4738</a> critical vulnerability in GDAL (CVSS 9.4), I believe we should seriously consider migrating to a Rust-based alternative or another "safer" language.
         </p>
         <h3>Problem</h3>
         <hr>
         <ul>
-          <li>Recurring memory safety issues in GDAL (15+ CVEs in last 2 years)</li>
+          <li>Recurring memory safety issues in GDAL and its vendored C dependencies</li>
           <li>Complex dependency management</li>
         </ul>
         <h3>Proposed solution</h3>

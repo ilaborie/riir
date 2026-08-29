@@ -1,6 +1,10 @@
 # Peut-on RIIR de tout ?
 
-Talk given on November 13, 2025 at [DevFest Toulouse](https://devfesttoulouse.fr/).
+Talk given at:
+
+- [Capitole du Libre](https://capitoledulibre.org/) — Toulouse, November 14-15, 2026
+- [Epitech Summit](https://summit.epitech.eu/e/toulouse) — Toulouse, February 4, 2026
+- [DevFest Toulouse](https://devfesttoulouse.fr/) — November 13, 2025
 
 Built with [Toboggan](https://github.com/ilaborie/toboggan), a presentation tool written in Rust.
 

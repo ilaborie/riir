@@ -5,7 +5,8 @@ classes = ["no_title"]
 
 <style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 
@@ -28,8 +29,10 @@ article {
 - [ripgrep (rg)](https://github.com/BurntSushi/ripgrep): remplace `grep`
 - [fd](https://github.com/sharkdp/fd): remplace `find`, plus rapide
 - [bat](https://github.com/sharkdp/bat) : `cat` avec des ailes
-- [exa](https://github.com/ogham/exa),[lsd](https://github.com/lsd-rs/lsd), [eza](https://github.com/eza-community/eza) : `ls` moderne
+- [eza](https://github.com/eza-community/eza), [lsd](https://github.com/lsd-rs/lsd) : `ls` moderne
 - [starship](https://starship.rs/) : prompt shell personnalisable
+- [mise](https://mise.jdx.dev/) : versions d'outils &amp; tâches
+- [hyperfine](https://github.com/sharkdp/hyperfine) : benchmark de commandes
 - ...
 
 <!-- notes -->

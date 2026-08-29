@@ -21,11 +21,11 @@ background-position:
     52% 38%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    12vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    7.2rem
     ;
 background-repeat:
     no-repeat,
@@ -55,7 +55,7 @@ h2 {
 
 <!-- pause -->
 
-## Nouveau project en Rust ?
+## Nouveau projet en Rust ?
 
 <!-- pause -->
 

@@ -5,7 +5,8 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 
@@ -22,9 +23,9 @@ article {
 
 #### Ou encore
 
-- 🕹️ moteurs de jeux,
-- 🔐 crypto,
-- 🤖 AI,
+- 🕹️ jeux : [Bevy](https://bevyengine.org/)
+- 🤖 <abbr title="Intelligence Artificielle">IA</abbr> : [candle](https://github.com/huggingface/candle), [burn](https://burn.dev/)
+- 🔐 crypto : [RustCrypto](https://github.com/RustCrypto), [rustls](https://github.com/rustls/rustls)
 - ...
 
 <!-- notes -->

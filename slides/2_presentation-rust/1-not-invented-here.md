@@ -5,7 +5,8 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 
@@ -22,7 +23,7 @@ article {
 
 #### 🐫 Fonctionnelle
 
-- [**OCaml**](https://ocaml.org/), [**SML**](https://smlfamily.github.io/) : Types algébriques, <span lan="en">pattern matching</span>
+- [**OCaml**](https://ocaml.org/), [**SML**](https://smlfamily.github.io/) : Types algébriques, <span lang="en">pattern matching</span>
 - [**Haskell**](https://www.haskell.org/) : Traits
 
 <!-- pause -->

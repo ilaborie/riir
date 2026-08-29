@@ -7,7 +7,7 @@ style = "margin-top: 0; min-height: 100%; width:100%; background: url(./public/y
 <style>
 .razor {
     opacity: 0;
-    font-size: 25vh;
+    font-size: 8.4375rem;
     transition: opacity 1s;
     text-align: right;
     margin-right: 1em;

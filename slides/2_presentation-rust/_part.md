@@ -21,11 +21,11 @@ background-position:
     50% 67%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    14vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    8.4rem
     ;
 background-repeat:
     no-repeat,
@@ -75,3 +75,8 @@ a {
 D'après le [sondage annuel de Stackoverflow](https://survey.stackoverflow.co/)
 
 Raconte autant sur l'aspect technique qu'humain
+
+⚠️ AVANT LE TALK : vérifier si l'édition 2026 est publiée
+(elle ne l'était pas fin août 2026). Si oui, ajouter le lien
+<https://survey.stackoverflow.co/2026/technology#admired-and-desired>
+et dire « 11 ans d'affilée » au lieu de 10.

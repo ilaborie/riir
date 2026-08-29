@@ -5,9 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Peut-on RIIR de tout ?</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
     <style>
 *,
 *::before,
@@ -123,6 +120,40 @@ main {
 
     </style>
     <style>
+/* Bundled Nerd Font (Mono variant) for the live terminal.
+   The "Mono" build forces every icon glyph to a single cell width, which the
+   fixed-cell canvas renderer (toboggan-wasm terminal) requires for powerline /
+   icon glyphs to stay on the grid. Icons are only carried in the Regular face;
+   Bold/Italic keep Latin + Powerline (command output rarely uses Nerd icons). */
+@font-face {
+	font-family: "JetBrainsMono Nerd Font Mono";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/JetBrainsMonoNerdFontMono-Regular.woff2") format("woff2");
+}
+@font-face {
+	font-family: "JetBrainsMono Nerd Font Mono";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/JetBrainsMonoNerdFontMono-Bold.woff2") format("woff2");
+}
+@font-face {
+	font-family: "JetBrainsMono Nerd Font Mono";
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/JetBrainsMonoNerdFontMono-Italic.woff2") format("woff2");
+}
+@font-face {
+	font-family: "JetBrainsMono Nerd Font Mono";
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/JetBrainsMonoNerdFontMono-BoldItalic.woff2") format("woff2");
+}
+
 :root {
 	/* Typography */
 	--font-slide-title: system-ui, -apple-system, sans-serif;
@@ -141,6 +172,17 @@ main {
 	--color-info: #3b82f6;
 	--color-warning: #d97706;
 	--color-error: #dc2626;
+
+	/* Keyboard keys (<kbd>) */
+	--kbd-fg: #333;
+	--kbd-face-near: #ddd; /* top-right corner of the key face */
+	--kbd-face-far: white; /* opposite corner of the key face */
+	--kbd-side: #aaa; /* key body / side wall */
+	--kbd-side-edge: #ccc; /* outer rim of the side wall */
+	--kbd-border: gray; /* thin outline around the key body */
+	--kbd-shine: rgba(255, 255, 255, 0.7); /* glossy highlight */
+	--kbd-radius: 0.3em;
+	--kbd-font-size: 0.8em;
 
 	/* Transparency */
 	--color-border-transparent: rgba(255, 255, 255, 0.3);
@@ -185,8 +227,22 @@ main {
 	--icon-info: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='12' cy='12' r='10'/%3e%3cpath d='M12 16v-4'/%3e%3cpath d='m12 8 .01 0'/%3e%3c/svg%3e");
 }
 
+/* The root size every slide is measured in: headings, code, tables and the
+   slide's own padding are all relative to it.
+
+   It was a flat 32px, so a deck laid out for a 1920x1080 projector kept those
+   exact pixels on a 1024x768 one — where the same slide is 47% narrower. Code
+   blocks ran off the right edge and the last lines fell off the bottom, with
+   nothing to scroll.
+
+   Now it tracks the smaller of the two viewport dimensions, so a slide keeps
+   the same proportions — the same characters per line, the same lines per
+   slide — whatever it is shown on. The 32px ceiling is the old value: at
+   1920x1080 `min()` yields exactly 32px, so nothing changes at or above the
+   size decks were built for, and only smaller screens are affected. The floor
+   keeps a very small window legible rather than merely correct. */
 html {
-	font-size: 32px;
+	font-size: clamp(12px, min(1.667vw, 2.963vh), 32px);
 }
 
 body {
@@ -245,37 +301,53 @@ h6 {
 	margin: 0.1em 0;
 }
 
+/* Sizes go through custom properties so a deck can retune them from
+   `_head.html`. Descendant selectors cannot reach in here — this shadow tree is
+   closed to them — but custom properties inherit across the boundary, so
+   `.toboggan-slide { --slide-h1-size: 220% }` in the light DOM works. The
+   fallback keeps the default without a `:host` declaration to be overridden. */
 h1 {
-	font-size: 350%;
+	font-size: var(--slide-h1-size, 350%);
 	text-align: center;
 }
 
 h2 {
-	font-size: 200%;
+	font-size: var(--slide-h2-size, 200%);
 	text-align: center;
 }
 
 h3 {
-	font-size: 150%;
+	font-size: var(--slide-h3-size, 150%);
 }
 
 h4 {
-	font-size: 115%;
+	font-size: var(--slide-h4-size, 115%);
 }
 
 h5 {
-	font-size: 110%;
+	font-size: var(--slide-h5-size, 110%);
 }
 
-h5 {
-	font-size: 105%;
+/* Was a second `h5` rule, so `h6` had no size of its own at all. */
+h6 {
+	font-size: var(--slide-h6-size, 105%);
 }
 
+/* `list-style: none` alone left the UA's `padding-inline-start: 40px` in place —
+   a fixed pixel length in a tree where every other size is relative, so a deck
+   scaled to the projector's resolution saw its lists drift right as the screen
+   got smaller. The light DOM never had it (`reset.css` zeroes padding on
+   everything), so the exported HTML and the PDF already rendered lists flush. */
 ul,
 ol,
 dl {
 	margin: 0.1em;
+	padding: 0;
 	list-style: none;
+}
+
+p {
+	margin: 0.4em 0;
 }
 
 article {
@@ -288,15 +360,58 @@ code {
 	color: var(--accent2);
 	text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 	font-family: var(--font-slide-mono);
+	font-size: var(--slide-code-size, 100%);
+}
+
+/* A `code` inside a `pre` would otherwise apply the ratio twice. */
+pre code {
+	font-size: 100%;
+}
+
+/* Tables had no size of their own, so they rendered at the 32px body size and
+   a reference table of eight rows overflowed the slide. Still 100% by default —
+   decks opt into something denser. */
+table {
+	font-size: var(--slide-table-size, 100%);
+}
+
+/* A Mermaid diagram, drawn to SVG while the deck built. The SVG carries its own
+   pixel width and height, so without this a diagram wider than the slide simply
+   spills off the side rather than scaling down — `height: auto` keeps the aspect
+   ratio while `max-width` does the clamping. */
+.mermaid {
+	display: flex;
+	justify-content: center;
+	/* `auto` rather than `0`: a `mermaid:width=…` wrapper is narrower than the
+	   slide, and without it the diagram sits against the left edge while the
+	   same fence is centred in the PDF. */
+	margin: 0.5em auto;
+}
+
+.mermaid svg {
+	max-width: 100%;
+	height: auto;
+}
+
+/* `mermaid:width=…` asked for a size, so the diagram fills it rather than
+   stopping at its own pixel width — the same thing the fence does in the PDF,
+   where `image(…, width: …)` scales both ways. */
+.mermaid-sized svg {
+	width: 100%;
 }
 
 /* Layout */
+/* Width goes through a custom property for the same reason the type sizes do,
+   plus one this shadow tree cannot solve on its own: `vw` is the *viewport*, so
+   a slide rendered into a pane rather than a whole screen — the presenter
+   view's two previews — laid itself out wider than the box it was in and spilled
+   out of it. Those panes set `--slide-width: 100%`. */
 section {
 	margin: 1rem auto 0;
-	width: 80vw;
+	width: var(--slide-width, 80vw);
 	min-height: calc(100% - 1rem);
 	max-height: calc(100% - 1rem);
-	overflow: auto;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 
@@ -337,16 +452,90 @@ a:visited {
 	}
 }
 
-/* Links */
+/* Inline code.
+
+   No hover treatment: this rule matches every `code`, including the one inside
+   every `<pre>`, so moving the mouse across a slide drew a box around whole
+   code blocks. On a projector that is a rectangle appearing for no reason the
+   room can see, and the transparent border existed only to reserve the space
+   that box needed. */
 code {
 	color: var(--accent2);
-	border: thin solid transparent;
 	border-radius: 0.25em;
 	padding: 0 0.125em;
+}
 
-	&:hover {
-		border-color: rgba(0, 0, 0, 0.25);
-	}
+/* Keyboard keys (<kbd>) — physical 3D key cap.
+   Customize via the --kbd-* custom properties (see main.css :root). */
+kbd {
+	display: inline-block;
+	position: relative;
+	top: -0.2em;
+	margin: 0 0.2em;
+	padding: 0.17em 0.6em 0.17em 0.4em;
+
+	color: var(--kbd-fg);
+	font: normal var(--kbd-font-size) / 1 var(--font-slide-body);
+	text-shadow: none;
+	text-decoration: none;
+	cursor: default;
+	border-radius: var(--kbd-radius);
+	box-shadow: inset 0 -0.2em 0.12em -0.15em var(--kbd-shine);
+	background: radial-gradient(
+		ellipse at top right,
+		var(--kbd-face-near) 0%,
+		var(--kbd-face-far) 100%
+	);
+}
+
+kbd::before,
+kbd::after {
+	content: "";
+	position: absolute;
+	left: -0.17em;
+	right: -0.17em;
+	top: 0.1em;
+	bottom: -0.4em;
+	border-radius: 0.4em;
+}
+
+/* glossy left highlight */
+kbd::before {
+	z-index: -1;
+	border: 1px solid var(--kbd-border);
+	background: radial-gradient(
+		circle 3em at -1.7em 0,
+		var(--kbd-shine) 0%,
+		var(--kbd-shine) 70%,
+		transparent 80%
+	);
+}
+
+/* side wall / depth */
+kbd::after {
+	z-index: -2;
+	background: radial-gradient(
+		ellipse 1em 1.7em at top right,
+		var(--kbd-side) 0%,
+		var(--kbd-side) 70%,
+		var(--kbd-side-edge) 100%
+	);
+}
+
+/* Pressed state: add class `kbd-down` to flatten the key */
+kbd.kbd-down {
+	top: 0;
+	box-shadow: inset 0 -0.2em 0.3em -0.1em color-mix(in srgb, var(--kbd-side) 70%, transparent);
+}
+
+kbd.kbd-down::before,
+kbd.kbd-down::after {
+	top: -0.1em;
+	bottom: -0.2em;
+}
+
+kbd.kbd-down::before {
+	box-shadow: inset 0 1px 6px 0 rgba(0, 0, 0, 1);
 }
 
 /* Common layout */
@@ -427,7 +616,96 @@ section.center {
 	}
 }
 
-/* TODO GRID */
+/* Terminals layout */
+.toboggan-terminals {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	align-items: stretch;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.toboggan-terminal {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 0;
+	max-height: 100%;
+	overflow: hidden;
+}
+
+/* Opt-in (frontmatter `classes = ["term-50vh"]`): pin the terminal pane to a
+   fixed half-viewport height instead of letting it flex against the slide body. */
+section.term-50vh .toboggan-terminals {
+	flex: 0 0 auto;
+	height: 50vh;
+}
+
+/* Wide layout: maximize space for terminal-heavy slides */
+section.wide {
+	width: var(--slide-width-wide, 95vw);
+	margin-top: 0.25rem;
+	min-height: calc(100% - 0.25rem);
+	max-height: calc(100% - 0.25rem);
+}
+
+/* GitHub-flavored Markdown alert blocks */
+.markdown-alert {
+	border-left: 0.25em solid var(--alert-clr, currentColor);
+	border-radius: 0 0.25em 0.25em 0;
+	padding: 0.5em 1em;
+	margin: 0.5em 0;
+	background-color: color-mix(in srgb, var(--alert-clr, currentColor) 10%, transparent);
+
+	.markdown-alert-title {
+		font-weight: bold;
+		font-size: 0.85em;
+		margin: 0 0 0.4em;
+		color: var(--alert-clr, inherit);
+		display: flex;
+		align-items: center;
+		gap: 0.4em;
+	}
+
+	/* The box padding + title margin handle spacing; keep paragraphs tight */
+	p {
+		margin: 0.2em 0;
+	}
+
+	> :first-child {
+		margin-top: 0;
+	}
+
+	> :last-child {
+		margin-bottom: 0;
+	}
+}
+
+.markdown-alert-note {
+	--alert-clr: #1f6feb;
+	.markdown-alert-title::before { content: "ⓘ "; }
+}
+
+.markdown-alert-tip {
+	--alert-clr: #1a7f37;
+	.markdown-alert-title::before { content: "✔ "; }
+}
+
+.markdown-alert-important {
+	--alert-clr: #8250df;
+	.markdown-alert-title::before { content: "❗ "; }
+}
+
+.markdown-alert-warning {
+	--alert-clr: #9a6700;
+	.markdown-alert-title::before { content: "⚠ "; }
+}
+
+.markdown-alert-caution {
+	--alert-clr: #cf222e;
+	.markdown-alert-title::before { content: "⛔ "; }
+}
 
     </style>
     <style>
@@ -453,8 +731,58 @@ main {
 		display: flex;
 		box-shadow: 1px 1px 1em rgba(0, 0, 0, .25);
 
+		/* Without the navigator the export is a stack you scroll, so every step
+		   has to be on screen at once: a hidden one would never appear. */
 		.step {
-			opacity: 1 !important;
+			opacity: 1;
+		}
+
+		/* And its links have to work. `.step a` is `pointer-events: none` so a
+		   link cannot be clicked before it is revealed — but nothing reveals
+		   anything here, which left every link in a step dead. */
+		.step a {
+			pointer-events: auto;
+		}
+	}
+}
+
+/* With the navigator running: one slide at a time, steps revealed as you go.
+   Gated on the class the script adds, and screen-only, so a file opened with
+   scripting off — or sent to a printer — is still the whole deck in order. */
+@media screen {
+	html.toboggan-js {
+		body {
+			overflow: hidden;
+		}
+
+		main {
+			gap: 0;
+		}
+
+		.toboggan-slide {
+			display: none;
+			outline: none;
+			box-shadow: none;
+		}
+
+		.toboggan-slide.current {
+			display: flex;
+		}
+
+		.toboggan-slide .step {
+			opacity: var(--step-opacity-hidden);
+		}
+
+		.toboggan-slide .step.step-done {
+			opacity: var(--step-opacity-revealed);
+		}
+
+		.toboggan-slide .step.step-current {
+			opacity: var(--step-opacity-active);
+		}
+
+		.toboggan-slide .step:not(.step-done) a {
+			pointer-events: none;
 		}
 	}
 }
@@ -488,22 +816,24 @@ main {
 	.step {
 		opacity: 1 !important;
 	}
+
+	/* Alert blocks: keep border, drop tinted background */
+	.markdown-alert {
+		background-color: transparent !important;
+		break-inside: avoid;
+		page-break-inside: avoid;
+	}
 }
 
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
-    rel="stylesheet"
-/>
-<link href="./public/style.css" rel="stylesheet" />
+    <link href="public/fonts/bricolage-grotesque.css" rel="stylesheet" />
+<link href="public/style.css" rel="stylesheet" />
 
 </head>
 
 <body>
     <main>
-<div class="toboggan-slide"><section class="no_title cover" style="margin-top: 0;
+<div class="toboggan-slide" id="slide-1"><section class="no_title cover" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -530,18 +860,17 @@ background-position:
     51% 13%
     ;
 background-size:
-    30vw,
-    50vw,
-    13vw,
-    15vw,
-    12vw,
-    3.5vw,
-    2.5vw,
-    4vw,
-    2vw
+    18rem,
+    30rem,
+    7.8rem,
+    9rem,
+    7.2rem,
+    2.1rem,
+    1.5rem,
+    2.4rem,
+    1.2rem
     ;
 background-repeat:
-    no-repeat,
     no-repeat,
     no-repeat,
     no-repeat,
@@ -571,57 +900,64 @@ section.cover, section.center {
   }
 }
 
+/* Chrome's UA margin for `figure` is a fixed 40px, which alone would not follow
+   the deck's viewport scale (see public/style.css); 1.25rem is that same 40px on
+   the 1920x1080 canvas. */
+figure {
+    margin-inline: 1.25rem;
+}
+
 .crab {
-    width: 30vw;
+    width: 18rem;
     position: absolute;
-    bottom: -4vh;
-    right: -2vw;
+    bottom: -1.35rem;
+    right: -1.2rem;
     transform: rotate(-.05turn);
 }
 
 .shell1 {
-    width: 10vw;
+    width: 6rem;
     position: absolute;
-    bottom: 16vh;
-    right: 24vw;
+    bottom: 5.4rem;
+    right: 14.4rem;
     transform: rotate(.05turn);
 }
 
 .shell2 {
-    width: 10vw;
+    width: 6rem;
     position: absolute;
-    bottom: 22vh;
-    right: 12vw;
+    bottom: 7.425rem;
+    right: 7.2rem;
     transform: rotate(-0.08turn);
 }
 
 .shrimp {
-    width: 12vw;
+    width: 7.2rem;
     position: absolute;
-    top: 26vh;
-    right: 27vw;
+    top: 8.775rem;
+    right: 16.2rem;
     transform: rotate(-0.05turn);
 }
 
 </style>
 <h1>Peut-on <abbr title="Rewrite It In Rust">RIIR</abbr> de tout ?</h1>
 <figure class="crab">
-    <img src="./public/items/animal_crabe.svg">
+    <img src="public/items/animal_crabe.svg">
 </figure>
 <figure class="shell1">
-    <img src="./public/items/coquillage1.svg">
+    <img src="public/items/coquillage1.svg">
 </figure>
 <figure class="shell2">
-    <img src="./public/items/coquillage2.svg">
+    <img src="public/items/coquillage2.svg">
 </figure>
 <figure class="shrimp">
-    <img src="./public/items/animal_crevette.svg">
+    <img src="public/items/animal_crevette.svg">
 </figure>
-</article></section></div><div class="toboggan-slide"><section class="no_title center part"><h2>1. Quèsaco ?</h2><article><h2>Il était une fois...</h2>
-</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.1 Vous avez un message</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-2"><section class="no_title center part"><h2>1. Quèsaco ?</h2><article><h2>Il était une fois...</h2>
+</article></section></div><div class="toboggan-slide" id="slide-3"><section class="no_title standard"><h2>1.1 Vous avez un message</h2><article><style>
 #icon-mail {
     margin: auto 0;
-    width: 20vmin;
+    width: 6.75rem;
     position: relative;
     align-self: center;
 }
@@ -643,9 +979,9 @@ section.cover, section.center {
 }
 </style>
 <figure id="icon-mail">
-    <img src="./public/mail.svg">
+    <img src="public/mail.svg">
 </figure>
-</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.2 Nouvelle CVE</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-4"><section class="no_title standard"><h2>1.2 Nouvelle CVE</h2><article><style>
 .mail {
     font-size: 80%;
     margin: .5em;
@@ -654,6 +990,13 @@ section.cover, section.center {
     border: thin solid gray;
     border-radius: .5em;
     box-shadow: .1em .1em .2em rgba(0, 0, 0, .8);
+}
+
+/* Chrome's UA margin for `figure` is a fixed 40px, which alone would not follow
+   the deck's viewport scale (see public/style.css); 1.25rem is that same 40px on
+   the 1920x1080 canvas. */
+figure {
+    margin-inline: 1.25rem;
 }
 
 .mail header {
@@ -694,6 +1037,13 @@ section.cover, section.center {
     display: flex;
     gap: 1em;
 
+    /* The inline SVGs carry a 24px intrinsic size, which would stay 24px at
+       every resolution — size them against the text instead. */
+    img {
+        width: 1em;
+        height: 1em;
+    }
+
     ul {
         border: thin solid rgba(0,0,0,.2);
         border-radius: .5em;
@@ -710,7 +1060,7 @@ section.cover, section.center {
     
     .score {
         color: firebrick;
-        font-family: font-family: var(--font-slide-mono);
+        font-family: var(--font-slide-mono);
     }
 }
 </style>
@@ -718,26 +1068,27 @@ section.cover, section.center {
     <div class="toolbar">
         <ul>
             <li title="Reply">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWljb24gbHVjaWRlLXJlcGx5Ij48cGF0aCBkPSJNMjAgMTh2LTJhNCA0IDAgMCAwLTQtNEg0Ii8+PHBhdGggZD0ibTkgMTctNS01IDUtNSIvPjwvc3ZnPg==">
+                <img alt="Répondre" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWljb24gbHVjaWRlLXJlcGx5Ij48cGF0aCBkPSJNMjAgMTh2LTJhNCA0IDAgMCAwLTQtNEg0Ii8+PHBhdGggZD0ibTkgMTctNS01IDUtNSIvPjwvc3ZnPg==">
+            </li>
             <li title="Reply All">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWFsbC1pY29uIGx1Y2lkZS1yZXBseS1hbGwiPjxwYXRoIGQ9Im0xMiAxNy01LTUgNS01Ii8+PHBhdGggZD0iTTIyIDE4di0yYTQgNCAwIDAgMC00LTRINyIvPjxwYXRoIGQ9Im03IDE3LTUtNSA1LTUiLz48L3N2Zz4=">
+                <img alt="Répondre à tous" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWFsbC1pY29uIGx1Y2lkZS1yZXBseS1hbGwiPjxwYXRoIGQ9Im0xMiAxNy01LTUgNS01Ii8+PHBhdGggZD0iTTIyIDE4di0yYTQgNCAwIDAgMC00LTRINyIvPjxwYXRoIGQ9Im03IDE3LTUtNSA1LTUiLz48L3N2Zz4=">
             </li>
             <li title="Forward">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJlcGx5LWljb24gbHVjaWRlLXJlcGx5Ij48cGF0aCBkPSJNMjAgMTh2LTJhNCA0IDAgMCAwLTQtNEg0Ii8+PHBhdGggZD0ibTkgMTctNS01IDUtNSIvPjwvc3ZnPg==">
+                <img alt="Transférer" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWZvcndhcmQtaWNvbiBsdWNpZGUtZm9yd2FyZCI+PHBhdGggZD0ibTE1IDE3IDUtNS01LTUiLz48cGF0aCBkPSJNNCAxOHYtMmE0IDQgMCAwIDEgNC00aDEyIi8+PC9zdmc+">
             </li>
         </ul>
         <ul>
             <li title="Archive">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFyY2hpdmUtaWNvbiBsdWNpZGUtYXJjaGl2ZSI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjUiIHg9IjIiIHk9IjMiIHJ4PSIxIi8+PHBhdGggZD0iTTQgOHYxMWEyIDIgMCAwIDAgMiAyaDEyYTIgMiAwIDAgMCAyLTJWOCIvPjxwYXRoIGQ9Ik0xMCAxMmg0Ii8+PC9zdmc+">
+                <img alt="Archiver" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFyY2hpdmUtaWNvbiBsdWNpZGUtYXJjaGl2ZSI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjUiIHg9IjIiIHk9IjMiIHJ4PSIxIi8+PHBhdGggZD0iTTQgOHYxMWEyIDIgMCAwIDAgMiAyaDEyYTIgMiAwIDAgMCAyLTJWOCIvPjxwYXRoIGQ9Ik0xMCAxMmg0Ii8+PC9zdmc+">
             </li>
             <li title="Delete">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRyYXNoLWljb24gbHVjaWRlLXRyYXNoIj48cGF0aCBkPSJNMTkgNnYxNGEyIDIgMCAwIDEtMiAySDdhMiAyIDAgMCAxLTItMlY2Ii8+PHBhdGggZD0iTTMgNmgxOCIvPjxwYXRoIGQ9Ik04IDZWNGEyIDIgMCAwIDEgMi0yaDRhMiAyIDAgMCAxIDIgMnYyIi8+PC9zdmc+">
+                <img alt="Supprimer" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRyYXNoLWljb24gbHVjaWRlLXRyYXNoIj48cGF0aCBkPSJNMTkgNnYxNGEyIDIgMCAwIDEtMiAySDdhMiAyIDAgMCAxLTItMlY2Ii8+PHBhdGggZD0iTTMgNmgxOCIvPjxwYXRoIGQ9Ik04IDZWNGEyIDIgMCAwIDEgMi0yaDRhMiAyIDAgMCAxIDIgMnYyIi8+PC9zdmc+">
             </li>
         </ul>
     </div>
     <header>
         <figure class="avatar">
-            <img src="https://robohash.org/620050a4db5104bae758cd75171d64ca?set=set4">
+            <img alt="Avatar de Rowan O'Wasp" src="public/avatar-rssi.png">
         </figure>
         <div class="name"><strong>Rowan O'Wasp</strong> - rssi@my-company.ai</div>
         <div class="title">[URGENT] CVE GDAL</div>
@@ -745,19 +1096,22 @@ section.cover, section.center {
     </header>
     <hr>
     <div class="body">
-Bonjour,<br>
+<p>Bonjour,<br></p>
 <p>
 Suite à notre audit de sécurité régulier et l'analyse de votre <strong>BOM</strong> (Bill of Materials), j'ai identifié que votre projet utilise <strong>GDAL 3.10.x</strong>.
 </p>
 <p>
 Une vulnérabilité <strong>critique</strong> vient d'être publiée :<br><br>
-🔴 <strong>CVE-2025-29480</strong> - Score CVSS : <strong class="score">9.8/10</strong><br><br>
-- Type : Buffer overflow dans le parser GeoTIFF<br>
-- Impact : Exécution de code arbitraire possible<br>
-- Exploitation : Active dans la nature<br>
+<p>🔴 <strong>CVE-2026-4738</strong> - Score CVSS 4.0 : <strong class="score">9.4/10</strong><br><br></p>
+<ul>
+<li>Type : dépassement de tampon dans le zlib embarqué (<code>frmts/zlib/contrib/infback9</code>)<br></li>
+<li>Impact : Exécution de code arbitraire possible<br></li>
+<li>Exploitation : rapportée (<code>E:A</code>)<br></li>
+<li>Correctif : GDAL ≥ 3.11.0<br></li>
+</ul>
 </p>
 <p>
-<a href="https://nvd.nist.gov/vuln/detail/CVE-2025-29480">Détails CVE</a>
+<a href="https://nvd.nist.gov/vuln/detail/CVE-2026-4738">Détails CVE</a>
 </p>
 <p>
 ⚠️ <strong>Action requise</strong> : Mise à jour urgente ou mitigation
@@ -766,21 +1120,23 @@ Une vulnérabilité <strong>critique</strong> vient d'être publiée :<br><br>
 Cordialement,<br>
 <strong>Rowan O'Wasp</strong> - RSSI
 </p>
-    </div>
 </div>
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>1.3 CVE-2025-29480</h2><article><style>
+</div>
+</article></section></div><div class="toboggan-slide" id="slide-5"><section class="no_title spread-steps standard"><h2>1.3 CVE-2026-4738</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
-<h3><code>CVE-2025-29480</code></h3>
+<h3><code>CVE-2026-4738</code></h3>
 
 <div class="step step-0"><!-- begin step -->
 <p>💥 <strong>Buffer Overflow</strong>: Gestion mémoire défaillante</p>
+<p><small>dans le zlib embarqué de GDAL, pas dans son code géospatial</small></p>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
-<p>📊 <strong>70%</strong> des CVEs critiques: problème mémoire</p>
+<p>📊 <strong>~70%</strong> des CVEs critiques: problème mémoire</p>
 <ul>
 <li><a href="https://msrc.microsoft.com/blog/2019/07/a-proactive-approach-to-more-secure-code/">Microsoft: Proactive Approach to Secure Code</a></li>
 <li><a href="https://hacks.mozilla.org/2019/02/rewriting-a-browser-component-in-rust/">Mozilla: Rewriting Browser Component in Rust</a></li>
@@ -790,9 +1146,16 @@ article {
 </div><!-- end step -->
 
 <div class="step step-2"><!-- begin step -->
+<p>📉 Android: <strong>76% → 24%</strong> en 6 ans, <strong>&lt; 20%</strong> en 2025</p>
+<ul>
+<li><a href="https://blog.google/security/rust-in-android-move-fast-fix-things/">Rust in Android: move fast and fix things</a></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
 <p><strong>💭 Et si on pouvait éviter ça ?</strong></p>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>1.4 GitHub issue</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-6"><section class="no_title standard"><h2>1.4 GitHub issue</h2><article><style>
 .gh-issue {
   font-size: 80%;
   padding: 0.25em .5em;
@@ -823,6 +1186,13 @@ article {
       padding: .25em .75em;
       margin: .25em;
       font-size: .5rem;
+
+      /* The inline SVG carries a 24px intrinsic size, which would stay 24px at
+         every resolution — size it against the text instead. */
+      img {
+        width: 1.5em;
+        height: 1.5em;
+      }
     }
   }
   h2 {
@@ -856,6 +1226,9 @@ hr {
 .body ul {
   list-style: disc;
   margin: .5em 0;
+  /* The slide stylesheet zeroes list padding; put back enough for the markers to
+     sit inside the card. 1.25rem is the 40px browsers use, on the deck canvas. */
+  padding-inline-start: 1.25rem;
 }
 
 .card {
@@ -911,7 +1284,7 @@ hr {
 </style>
 <div class="gh-issue">
   <header>
-    <h2>Critical vulnerability CVE-2025-29480<span class="gh-id">#42</span></h2>
+    <h2>Critical vulnerability CVE-2026-4738<span class="gh-id">#42</span></h2>
     <div class="tools">
       <button>
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZWZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaXJjbGUtZG90LWljb24gbHVjaWRlLWNpcmNsZS1kb3QiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMSIvPjwvc3ZnPg==">
@@ -927,7 +1300,7 @@ hr {
   <hr>
   <div class="body">
     <figure>
-        <img src="https://i.pravatar.cc/150?img=50">
+        <img src="public/avatar-ilovecrab.jpg">
     </figure>
     <div class="card">
       <header>
@@ -938,12 +1311,12 @@ hr {
         <p>Consider migrating from GDAL to "safer" language</p>
         <h3>Description</h3>
         <hr>
-        <p>Given the recent <a href="https://www.cve.org/CVERecord?id=CVE-2025-29480">CVE-2025-29480</a> critical vulnerability in GDAL (CVSS 9.8), I believe we should seriously consider migrating to a Rust-based alternative or another "safer" language.
+        <p>Given the recent <a href="https://www.cve.org/CVERecord?id=CVE-2026-4738">CVE-2026-4738</a> critical vulnerability in GDAL (CVSS 9.4), I believe we should seriously consider migrating to a Rust-based alternative or another "safer" language.
         </p>
         <h3>Problem</h3>
         <hr>
         <ul>
-          <li>Recurring memory safety issues in GDAL (15+ CVEs in last 2 years)</li>
+          <li>Recurring memory safety issues in GDAL and its vendored C dependencies</li>
           <li>Complex dependency management</li>
         </ul>
         <h3>Proposed solution</h3>
@@ -957,7 +1330,7 @@ hr {
     </div>
   </div>
 </div>
-</article></section></div><div class="toboggan-slide"><section class="no_title center standard"><h2>1.5 RIIR</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-7"><section class="no_title center standard"><h2>1.5 RIIR</h2><article><style>
 .riir {
     text-align: center;
     display: flex;
@@ -998,9 +1371,10 @@ span.step-done {
 </li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>1.6 RIIR IRL</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-8"><section class="no_title spread-steps standard"><h2>1.6 RIIR IRL</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>RIIR <abbr title="In Real Life">IRL</abbr></h3>
@@ -1014,9 +1388,9 @@ article {
 
 <div class="step step-1"><!-- begin step -->
 <h4>🛠️ Outils systèmes</h4>
-<p><a href="https://github.com/trifectatechfoundation/sudo-rs">sudo-rs</a>,
-<a href="https://github.com/uutils/coreutils">coreutils</a>,
-<a href="https://news.ycombinator.com/item?id=34588340">Fish Shell</a>,
+<p><a href="https://github.com/trifectatechfoundation/sudo-rs">sudo-rs</a> &amp;
+<a href="https://github.com/uutils/coreutils">coreutils</a>: par défaut dans <a href="https://canonical.com/blog/canonical-releases-ubuntu-26-04-lts-resolute-raccoon">Ubuntu 26.04 LTS</a>,
+<a href="https://fishshell.com/blog/rustport/">Fish Shell</a>: portage terminé (4.0),
 <a href="https://github.com/GitoxideLabs/gitoxide">gitoxide</a></p>
 </div><!-- end step -->
 
@@ -1029,7 +1403,7 @@ article {
 <div class="step step-3"><!-- begin step -->
 <p>...</p>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-9"><section class="no_title part" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1048,11 +1422,11 @@ background-position:
     50% 67%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    14vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    8.4rem
     ;
 background-repeat:
     no-repeat,
@@ -1079,8 +1453,8 @@ a {
 <h2>Pourquoi en Rust ?</h2>
 
 <div class="step step-0"><!-- begin step -->
-<p><span lang="en">😻 Most loved/admired language</span><br>
-<a href="https://survey.stackoverflow.co/2016#technology-most-loved-dreaded-and-wanted">2016</a>,
+<p><span lang="en">😻 Most loved/admired language</span><br></p>
+<p><a href="https://survey.stackoverflow.co/2016#technology-most-loved-dreaded-and-wanted">2016</a>,
 <a href="https://survey.stackoverflow.co/2017#most-loved-dreaded-and-wanted">2017</a>,
 <a href="https://survey.stackoverflow.co/2018#most-loved-dreaded-and-wanted">2018</a>,
 <a href="https://survey.stackoverflow.co/2019#most-loved-dreaded-and-wanted">2019</a>,
@@ -1091,9 +1465,10 @@ a {
 <a href="https://survey.stackoverflow.co/2024/technology#admired-and-desired">2024</a>,
 <a href="https://survey.stackoverflow.co/2025/technology#2-programming-scripting-and-markup-languages">2025</a></p>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.1 NIH</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-10"><section class="no_title spread-steps standard"><h2>2.1 NIH</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3><abbr title="Not Invented Here">NIH</abbr></h3>
@@ -1109,7 +1484,7 @@ article {
 <div class="step step-1"><!-- begin step -->
 <h4>🐫 Fonctionnelle</h4>
 <ul>
-<li><a href="https://ocaml.org/"><strong>OCaml</strong></a>, <a href="https://smlfamily.github.io/"><strong>SML</strong></a> : Types algébriques, <span lan="en">pattern matching</span></li>
+<li><a href="https://ocaml.org/"><strong>OCaml</strong></a>, <a href="https://smlfamily.github.io/"><strong>SML</strong></a> : Types algébriques, <span lang="en">pattern matching</span></li>
 <li><a href="https://www.haskell.org/"><strong>Haskell</strong></a> : Traits</li>
 </ul>
 </div><!-- end step -->
@@ -1120,9 +1495,10 @@ article {
 <li><a href="https://cyclone.thelanguage.org/"><strong>Cyclone</strong></a> : Système de régions/lifetimes</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.2 Programmation système</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-11"><section class="no_title spread-steps standard"><h2>2.2 Programmation système</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Rust Vs langages bas niveaux</h3>
@@ -1146,12 +1522,13 @@ article {
 <ul>
 <li><a href="https://doc.rust-lang.org/cargo/">cargo</a>, <a href="https://crates.io/">crates.io</a> : gestion de dépendances</li>
 <li><a href="https://github.com/rust-lang/rustfmt">rustfmt</a>, <a href="https://doc.rust-lang.org/clippy/">clippy</a>: format &amp; linter</li>
-<li>Mais aussi, <a href="https://github.com/rust-lang/miri">miri</a>, <a href="https://rustsec.org/">rustsec</a>, ...</li>
+<li>Mais aussi, <a href="https://github.com/rust-lang/miri">miri</a>, <a href="https://rustsec.org/">rustsec</a>, <a href="https://mozilla.github.io/cargo-vet/">cargo-vet</a>, ...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.3 Contrôle sans GC</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-12"><section class="no_title spread-steps standard"><h2>2.3 Contrôle sans GC</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Rust Vs langages à gestion de mémoire</h3>
@@ -1161,7 +1538,7 @@ article {
 <ul>
 <li>Pas de <abbr title="ramasse miettes">GC</abbr></li>
 <li>Abstractions à coût nul</li>
-<li>📈 meilleur performance moyenne, p99</li>
+<li>📈 meilleures performances moyennes, p99</li>
 <li>📉 moins de mémoire</li>
 </ul>
 </div><!-- end step -->
@@ -1171,36 +1548,48 @@ article {
 <ul>
 <li>Choix d'allocation: pile ou tas</li>
 <li>Choix de pattern d'allocation: arena, slab, ...</li>
-<li>Choix de allocateur: jemalloc, mimalloc, ...</li>
+<li>Choix de l'allocateur: jemalloc, mimalloc, ...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.4 Sécurité du langage</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-13"><section class="no_title spread-steps standard"><h2>2.4 Sécurité du langage</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
-<h3>Autre avantages</h3>
+<h3>Autres avantages</h3>
 
 <div class="step step-0"><!-- begin step -->
 <h4>🛟 Système de typage</h4>
 <ul>
-<li>Type de données algébrique, <code>trait</code></li>
+<li>Types de données algébriques, <code>trait</code></li>
 <li><span lang="en">Pattern matching</span></li>
 <li><code>Option</code> et <code>Result</code></li>
 </ul>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
-<h4>🧵 Concurrence et mutations sans craintes</h4>
+<h4>🔑 Propriété et emprunt</h4>
 <ul>
-<li><span lang="en">Thread safety</span> à la compilation (pas de <span lang="en">data race</span>)</li>
-<li>Sémantique de l'emprunt <code>&amp;T</code>, d'emprunt exlcusif <code>&amp;mut T</code>,</li>
-<li>ou transmition <code>T</code></li>
+<li><code>T</code> : transfert de propriété (<span lang="en">move</span>)</li>
+<li><code>&amp;T</code> : emprunt partagé — <code>&amp;mut T</code> : emprunt exclusif</li>
+<li><abbr title="Resource Acquisition Is Initialization">RAII</abbr> : libération déterministe (<code>Drop</code>)</li>
+</ul>
+<p><small>Une seule règle : plusieurs lecteurs, <strong>ou</strong> un seul écrivain. Jamais les deux.</small></p>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🧵 <span lang="en">Fearless concurrency</span></h4>
+<ul>
+<li><code>Send</code> : transférable vers un autre thread</li>
+<li><code>Sync</code> : partageable entre threads</li>
+<li>Pas de <span lang="en">data race</span>, à la compilation</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.5 Quotidien</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-14"><section class="no_title spread-steps standard"><h2>2.5 Quotidien</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Rust au quotidien</h3>
@@ -1217,14 +1606,14 @@ article {
 
 <div class="step step-2"><!-- begin step -->
 <h4>🐧 OS &amp; Mobile</h4>
-<p>Linux, Android, Fushia, Windows, ...</p>
+<p>Linux, Android, Fuchsia, Windows, ...</p>
 </div><!-- end step -->
 
 <div class="step step-3"><!-- begin step -->
 <h4>💻 Outils</h4>
-<p>uv, ruff, biome, oxlint, ...</p>
+<p><a href="https://github.com/astral-sh/uv">uv</a>, <a href="https://astral.sh/ruff">ruff</a>, <a href="https://astral.sh/blog/ty">ty</a>, <a href="https://biomejs.dev/">biome</a>, <a href="https://oxc.rs/">oxlint</a>, ...</p>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>2.6 Pro/Con</h2><article><h3>🥇 Rust - Pros/cons</h3>
+</article></section></div><div class="toboggan-slide" id="slide-15"><section class="no_title spread-steps standard"><h2>2.6 Pro/Con</h2><article><h3>🥇 Rust - Pros/cons</h3>
 
 <div class="step step-0"><!-- begin step -->
 <div style="display:grid; gap: 1rem; grid-template-columns: 1fr 1fr;">
@@ -1232,10 +1621,10 @@ article {
     <header class="block" style="--bg: var(--color-success); --fg: white;">Pour</header>
     <ul>
       <li>plus de sécurité</li>
-      <li>de meilleur performances</li>
+      <li>de meilleures performances</li>
       <li>outillage plus simple</li>
-      <li>moins de charge cognitive</li>
       <li>plus de confiance sur le code</li>
+      <li>moins de charge cognitive</li>
       <li>écosystème de qualité</li>
       <li>dirigé par la communauté</li>
     </ul>
@@ -1253,7 +1642,7 @@ article {
 </div>
 </div>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-16"><section class="no_title part" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1272,11 +1661,11 @@ background-position:
     52% 35%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    14vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    8.4rem
     ;
 background-repeat:
     no-repeat,
@@ -1297,10 +1686,10 @@ h2 {
 }
 </style>
 <h2>Que peut-on faire avec Rust ?</h2>
-</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width:100%; background: url(./public/yak.webp); background-size: cover;"><h2>3.1 Yak-Shaving</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-17"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width:100%; background: url(./public/yak.webp); background-size: cover;"><h2>3.1 Yak-Shaving</h2><article><style>
 .razor {
     opacity: 0;
-    font-size: 25vh;
+    font-size: 8.4375rem;
     transition: opacity 1s;
     text-align: right;
     margin-right: 1em;
@@ -1338,9 +1727,10 @@ Photo by <a href="https://unsplash.com/@p_kuzovkova?utm_source=unsplash&utm_medi
 <div class="step step-0"><!-- begin step -->
 <div class="razor">🪒</div>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title standard"><h2>3.2 CLI</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-18"><section class="no_title standard"><h2>3.2 CLI</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Outils <abbr title="Command Line Interface">CLI</abbr></h3>
@@ -1361,14 +1751,17 @@ article {
 <li><a href="https://github.com/BurntSushi/ripgrep">ripgrep (rg)</a>: remplace <code>grep</code></li>
 <li><a href="https://github.com/sharkdp/fd">fd</a>: remplace <code>find</code>, plus rapide</li>
 <li><a href="https://github.com/sharkdp/bat">bat</a> : <code>cat</code> avec des ailes</li>
-<li><a href="https://github.com/ogham/exa">exa</a>,<a href="https://github.com/lsd-rs/lsd">lsd</a>, <a href="https://github.com/eza-community/eza">eza</a> : <code>ls</code> moderne</li>
+<li><a href="https://github.com/eza-community/eza">eza</a>, <a href="https://github.com/lsd-rs/lsd">lsd</a> : <code>ls</code> moderne</li>
 <li><a href="https://starship.rs/">starship</a> : prompt shell personnalisable</li>
+<li><a href="https://mise.jdx.dev/">mise</a> : versions d'outils &amp; tâches</li>
+<li><a href="https://github.com/sharkdp/hyperfine">hyperfine</a> : benchmark de commandes</li>
 <li>...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.3 Serveur backend</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-19"><section class="no_title spread-steps standard"><h2>3.3 Serveur backend</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Backend, Middleware</h3>
@@ -1376,22 +1769,23 @@ article {
 <div class="step step-0"><!-- begin step -->
 <h4>📦 Crates</h4>
 <ul>
-<li>Fondation: <a href="https://github.com/tokio-rs/tracing">tokio</a>, <a href="https://github.com/serde-rs/serde">serde</a>, <a href="https://github.com/tokio-rs/tracing">tracing</a>, <a href="https://github.com/seanmonstar/reqwest">reqwest</a>, <a href="https://github.com/tower-rs/tower">tower</a>, ...</li>
+<li>Fondation: <a href="https://github.com/tokio-rs/tokio">tokio</a>, <a href="https://github.com/serde-rs/serde">serde</a>, <a href="https://github.com/tokio-rs/tracing">tracing</a>, <a href="https://github.com/seanmonstar/reqwest">reqwest</a>, <a href="https://github.com/tower-rs/tower">tower</a>, ...</li>
 <li>Serveur: <a href="https://github.com/tokio-rs/axum">axum</a>, <a href="https://github.com/actix/actix-web">actix-web</a>, <a href="https://github.com/hyperium/tonic">tonic</a>, <a href="https://github.com/async-graphql/async-graphql">async-graphql</a> ...</li>
 <li>Accès DB: <a href="https://github.com/launchbadge/sqlx">sqlx</a>, <a href="https://github.com/diesel-rs/diesel">diesel</a>, <a href="https://github.com/SeaQL/sea-orm">SeaORM</a>, <a href="https://github.com/mongodb/mongo-rust-driver">mongodb</a> ...</li>
-<li>Cloud: <a href="https://github.com/apache/opendal">OpenDAL</a>, <a href="https://github.com/linkerd/linkerd2-proxy">linkerd2-proxy</a>, <a href="https://github.com/cloudflare/pingora">Pinagora</a>, SDK cloud, ...</li>
+<li>Cloud: <a href="https://github.com/apache/opendal">OpenDAL</a>, <a href="https://github.com/linkerd/linkerd2-proxy">linkerd2-proxy</a>, <a href="https://github.com/cloudflare/pingora">Pingora</a>, SDK cloud, ...</li>
 </ul>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
-<h3>🪜 Scaffolding</h3>
+<h4>🪜 Scaffolding</h4>
 <ul>
 <li><a href="https://loco.rs/">🚂 Loco</a></li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.4 Web avec WASM</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-20"><section class="no_title spread-steps standard"><h2>3.4 Web avec WASM</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3><abbr title="Web Assembly">WASM</abbr></h3>
@@ -1401,25 +1795,35 @@ article {
 <ul>
 <li><a href="https://leptos.dev/">Leptos</a>: full-stack comme React</li>
 <li><a href="https://dioxuslabs.com/">Dioxus</a> : cross-platform (web/desktop/mobile)</li>
+<li><a href="https://wasm-bindgen.github.io/wasm-bindgen/">wasm-bindgen</a>, <a href="https://trunkrs.dev/">Trunk</a> : le socle et le bundler</li>
 </ul>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
+<h4>📦 Hors du navigateur</h4>
+<ul>
+<li><a href="https://wasi.dev/">WASI</a> 0.2, modèle de composants</li>
+<li><a href="https://wasmtime.dev/">Wasmtime</a> : exécuter du code non fiable <strong>isolé</strong></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
 <ul>
 <li><a href="https://www.youtube.com/watch?v=OPKFfHmMuqg">🎥 Et si on écrivait nos Web Components en Rust ?</a></li>
 </ul>
 </div><!-- end step -->
 
-<div class="step step-2"><!-- begin step -->
+<div class="step step-3"><!-- begin step -->
 <h4>🏆 Champions</h4>
 <ul>
 <li><a href="https://graphite.rs/">✏️ graphite.rs</a></li>
 <li><a href="https://github.com/ironcalc/IronCalc">IronCalc</a></li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.5 Client lourd</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-21"><section class="no_title spread-steps standard"><h2>3.5 Client lourd</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Application desktop</h3>
@@ -1430,14 +1834,14 @@ article {
 <li><a href="https://slint.rs/">slint</a></li>
 <li><a href="https://www.gpui.rs/">gpui</a></li>
 <li><a href="https://github.com/iced-rs/iced">Iced</a></li>
-<li><a href="https://github.com/linebender/xilem/">Xilem</a>, ...</li>
+<li><a href="https://github.com/linebender/xilem/">Xilem</a>, <a href="https://github.com/linebender/xilem/tree/main/masonry">Masonry</a>, <a href="https://github.com/linebender/vello">Vello</a> — <a href="https://linebender.org/">Linebender</a>, ...</li>
 </ul>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
 <h4>🕸️ Web Based</h4>
 <ul>
-<li><a href="https://v2.tauri.app/">Tauri</a></li>
+<li><a href="https://tauri.app/">Tauri</a></li>
 <li><a href="https://dioxuslabs.com/">Dioxus</a></li>
 </ul>
 </div><!-- end step -->
@@ -1445,13 +1849,14 @@ article {
 <div class="step step-2"><!-- begin step -->
 <h4>🏆 Champions</h4>
 <ul>
-<li><a href="https://zed.dev/">Zed</a>: <abbr title="Integrated Development Environment">IDE</abbr></li>
-<li><a href="https://system76.com/cosmic">COSMIC desktop</a>: dans <a href="https://system76.com/pop/">Pop!_OS</a></li>
+<li><a href="https://zed.dev/">Zed</a>: <abbr title="Integrated Development Environment">IDE</abbr>, <a href="https://zed.dev/blog/zed-1-0"><strong>1.0</strong> en avril 2026</a></li>
+<li><a href="https://system76.com/cosmic">COSMIC desktop</a>: <a href="https://blog.system76.com/post/cosmic-epoch-1-updates/"><strong>Epoch 1</strong></a>, avec <a href="https://system76.com/pop/">Pop!_OS 24.04 LTS</a></li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>3.6 TUI</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-22"><section class="no_title spread-steps standard"><h2>3.6 TUI</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3><abbr title="Terminal User Interface">TUI</abbr></h3>
@@ -1477,17 +1882,35 @@ article {
 <li>...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>3.7 Diagram</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-23"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>3.7 Diagram</h2><article><style>
+/* The diagram is a raster wider than the slide box on anything below 1920px,
+   so it has to be contained rather than cropped by `section { overflow: hidden }`.
+   `flex: 1 1 0` + `min-height: 0` give the figure a definite height for the
+   image's `max-height: 100%` to resolve against. */
+article {
+    min-height: 0;
+}
+
 figure {
-    justify-content: center;
     display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
     margin: 0;
+    padding: 0 3rem;
+}
+
+figure img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 </style>
 <figure>
-    <img alt="Toboggan" src="./public/diagram.webp">
+    <img alt="Toboggan" src="public/diagram.webp">
 </figure>
-</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-24"><section class="no_title part" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1506,11 +1929,11 @@ background-position:
     52% 35%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    14vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    8.4rem
     ;
 background-repeat:
     no-repeat,
@@ -1531,9 +1954,10 @@ h2 {
 }
 </style>
 <h2>Encore plus</h2>
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.1 ESP32</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-25"><section class="no_title spread-steps standard"><h2>4.1 ESP32</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>ESP32-S3 - spec. hardware</h3>
@@ -1560,13 +1984,14 @@ article {
 <ul>
 <li>Display Type: 2.4-inch LCD</li>
 <li>SPI,  240 x 320 pixels, 40 MHz</li>
-<li>Driver IC: ILI9342C
-...</li>
+<li>Driver IC: ILI9342C</li>
 </ul>
+<p>...</p>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.2 Embarqué</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-26"><section class="no_title spread-steps standard"><h2>4.2 Embarqué</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Embarqué &amp; IoT</h3>
@@ -1584,36 +2009,49 @@ article {
 <li><a href="https://github.com/rust-embedded/heapless">heapless</a>, <a href="https://github.com/knurling-rs/defmt">defmt</a>, ...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.3 Mobile</h2><article><style>
+
+<div class="step step-1"><!-- begin step -->
+<h4>🎯 Cibles</h4>
+<p>ARM Cortex-M (STM32, nRF, ...), RISC-V, ESP32 (avec <a href="https://github.com/esp-rs">esp-rs</a>), AVR (expérimental)</p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide" id="slide-27"><section class="no_title spread-steps standard"><h2>4.3 Mobile</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>📱 Mobile</h3>
 
 <div class="step step-0"><!-- begin step -->
-<h4>📦 Crates</h4>
-<ul>
-<li><a href="https://mozilla.github.io/uniffi-rs/latest/">UniFFI</a>: binding avec Swift, Kotlin, ...</li>
-<li><a href="https://cjycode.com/flutter_rust_bridge/">Flutter Rust Bridge</a></li>
-<li>ou <a href="https://v2.tauri.app/">Tauri</a>, <a href="https://dioxuslabs.com/">Dioxus</a></li>
-</ul>
+<h4>🏗️ Un cœur en Rust, deux UI natives</h4>
+<p>La logique métier une seule fois — SwiftUI d'un côté, Jetpack Compose de l'autre</p>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
-<h4>🏆 Champions</h4>
+<h4>📦 Crates</h4>
 <ul>
-<li><strong>Proton mail</strong>: <a href="https://proton.me/blog/new-mail-apps">https://proton.me/blog/new-mail-apps</a></li>
-<li><strong>Signal</strong>: protocole crypto partagé</li>
-<li><strong>1Password</strong>: cryptographie Rust</li>
+<li><a href="https://mozilla.github.io/uniffi-rs/latest/">UniFFI</a> : bindings Swift &amp; Kotlin générés</li>
+<li><a href="https://github.com/redbadger/crux">Crux</a> : structurer le cœur partagé</li>
+<li><a href="https://cjycode.com/flutter_rust_bridge/">Flutter Rust Bridge</a>, ou tout en Rust avec <a href="https://tauri.app/">Tauri</a>, <a href="https://dioxuslabs.com/">Dioxus</a></li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.4 Python</h2><article><style>
+
+<div class="step step-2"><!-- begin step -->
+<h4>🏆 Champions</h4>
+<ul>
+<li><a href="https://proton.me/blog/next-generation-proton-mail-mobile-apps"><strong>Proton Mail</strong></a> : <strong>80%</strong> du code partagé iOS/Android</li>
+<li><a href="https://github.com/matrix-org/matrix-rust-sdk"><strong>Element X</strong></a> : Matrix Rust SDK, iOS <strong>et</strong> Android</li>
+<li><a href="https://mullvad.net/en/blog/announcing-gotatun-the-future-of-wireguard-at-mullvad-vpn"><strong>Mullvad</strong></a> : WireGuard en Rust, plantages <strong>0,40% → 0,01%</strong></li>
+<li><strong>Signal</strong>, <strong>1Password</strong> : le cœur cryptographique</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide" id="slide-28"><section class="no_title spread-steps standard"><h2>4.4 Python</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
-<h3>🐍 Interoperabilité avec Python</h3>
+<h3>🐍 Interopérabilité avec Python</h3>
 
 <div class="step step-0"><!-- begin step -->
 <h4>📦 Crates</h4>
@@ -1633,9 +2071,15 @@ article {
 <li>...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.5 Interop</h2><article><style>
+
+<div class="step step-2"><!-- begin step -->
+<h4>🛠️ Et l'outillage aussi</h4>
+<p><a href="https://github.com/astral-sh/uv">uv</a>, <a href="https://astral.sh/ruff">ruff</a>, <a href="https://astral.sh/blog/ty">ty</a> — <a href="https://astral.sh/blog/openai">Astral a rejoint OpenAI</a> en mars 2026</p>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide" id="slide-29"><section class="no_title spread-steps standard"><h2>4.5 Interop</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Rust &amp; autres écosystèmes</h3>
@@ -1657,23 +2101,42 @@ article {
 <div class="step step-2"><!-- begin step -->
 <ul>
 <li><strong>NodeJS</strong>: <a href="https://neon-rs.dev/">neon</a>, <a href="https://napi.rs/">napi</a>, <a href="https://deno.com/">Deno</a></li>
-<li><strong>JVM</strong>: <a href="https://akilmohideen.github.io/java-rust-bindings-manual/title.html">FFM API - Java Bindings for Rust</a>, <a href="https://github.com/giovanniberti/robusta">robusta</a></li>
+<li><strong>JVM</strong>: <a href="https://akilmohideen.github.io/java-rust-bindings-manual/title.html">FFM API</a> (finale depuis Java 22), <a href="https://github.com/jni-rs/jni-rs">jni</a>, <a href="https://github.com/giovanniberti/robusta">robusta</a></li>
 <li><strong>Ruby</strong>: <a href="https://github.com/matsadler/magnus">magnus</a></li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>4.6 Diagram 2</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-30"><section class="no_title standard" style="margin-top: 0; min-height: 100%; width: 100%;"><h2>4.6 Diagram 2</h2><article><style>
+/* The diagram is a raster wider than the slide box on anything below 1920px,
+   so it has to be contained rather than cropped by `section { overflow: hidden }`.
+   `flex: 1 1 0` + `min-height: 0` give the figure a definite height for the
+   image's `max-height: 100%` to resolve against. */
+article {
+    min-height: 0;
+}
+
 figure {
-    justify-content: center;
     display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
     margin: 0;
+    padding: 0 3rem;
+}
+
+figure img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 </style>
 <figure>
     <img alt="Toboggan" src="public/diagram2.webp">
 </figure>
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>4.7 Et le reste</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-31"><section class="no_title spread-steps standard"><h2>4.7 Et le reste</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>On peut presque tout faire</h3>
@@ -1689,13 +2152,13 @@ article {
 <div class="step step-1"><!-- begin step -->
 <h4>Ou encore</h4>
 <ul>
-<li>🕹️ moteurs de jeux,</li>
-<li>🔐 crypto,</li>
-<li>🤖 AI,</li>
+<li>🕹️ jeux : <a href="https://bevyengine.org/">Bevy</a></li>
+<li>🤖 <abbr title="Intelligence Artificielle">IA</abbr> : <a href="https://github.com/huggingface/candle">candle</a>, <a href="https://burn.dev/">burn</a></li>
+<li>🔐 crypto : <a href="https://github.com/RustCrypto">RustCrypto</a>, <a href="https://github.com/rustls/rustls">rustls</a></li>
 <li>...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title part" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-32"><section class="no_title part" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1714,11 +2177,11 @@ background-position:
     52% 35%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    19vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    11.4rem
     ;
 background-repeat:
     no-repeat,
@@ -1739,9 +2202,17 @@ h2 {
 }
 </style>
 <h2>Bilan</h2>
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>5.1 RIIR ou ne pas RIIR?</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-33"><section class="no_title spread-steps standard"><h2>5.1 RIIR ou ne pas RIIR?</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
+}
+
+/* La feuille de style du deck met le padding des listes à zéro, donc les items
+   s'alignaient sur le « si ... » qui les introduit. 1em les décale juste assez
+   pour qu'on lise « si <condition> » puis la liste, sans marqueur. */
+.two-columns ul {
+  padding-inline-start: 1em;
 }
 </style>
 <h3>RIIR ou ne pas RIIR?</h3>
@@ -1773,25 +2244,116 @@ article {
 <div class="step step-1"><!-- begin step -->
 <h4>🎯 Stratégie</h4>
 <ul>
-<li>Intégrer Rust dans les <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Deployement">CD</abbr></li>
+<li>Intégrer Rust dans les <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Deployment">CD</abbr></li>
 <li>Former progressivement les équipes</li>
 <li>Commencer petit</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>5.2 Et si on pouvait...</h2><article><h3>🙌 Projet parallèles</h3>
+</article></section></div><div class="toboggan-slide" id="slide-34"><section class="no_title spread-steps standard"><h2>5.2 Comment RIIR ?</h2><article><style>
+article {
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
+}
+
+/* `.scale` réduisait les trois exemples à 95% pour les faire tenir ; les deux
+   lignes récupérées en retirant les <br> forcés rendent ça inutile, et ils sont
+   plus lisibles à la taille du reste du slide. */
+.scale small {
+  opacity: .75;
+}
+</style>
+<h3>Comment RIIR ?</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>🧗 Par composants</h4>
+<p>Un composant à la fois — Firefox, <a href="https://github.com/RediSearch/RediSearch">RediSearch</a></p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🤖 Traduction automatique</h4>
+<ul>
+<li><a href="https://github.com/immunant/c2rust">c2rust</a> : transpilation à base de règles</li>
+<li><a href="https://www.darpa.mil/research/programs/translating-all-c-to-rust">DARPA TRACTOR</a> : <span lang="en"><em>Translating All C To Rust</em></span></li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🏗️ Trois échelles</h4>
+<div class="scale">
+<ul>
+<li>une <strong>dépendance</strong> — <a href="https://bughunters.google.com/blog/scaling-memory-safety">Google, <code>giflib</code></a> : perf neutre, millions de tests</li>
+<li><strong>tout</strong> le code — <a href="https://bun.com/blog/bun-in-rust">Bun</a> : 535 000 lignes Zig → Rust en <strong>11 jours</strong></li>
+<li>une <strong>réimplémentation</strong> — <a href="https://github.com/malisper/pgrust">pgrust</a> : Postgres, 46 066 tests <small>(pas pour la prod)</small></li>
+</ul>
+</div>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<h4>⚠️ Deux pièges</h4>
+<ul>
+<li>le <strong><code>unsafe</code></strong> : un port mécanique = du C déguisé en Rust</li>
+<li>l'<strong>oracle</strong> : écrire le Rust n'est plus le goulot, <strong>prouver l'équivalence</strong> l'est</li>
+</ul>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide" id="slide-35"><section class="no_title spread-steps standard"><h2>5.3 Et notre CVE ?</h2><article><style>
+article {
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
+}
+
+.punchline {
+  font-size: 150%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+</style>
+<h3>🗺️ Et notre CVE GDAL ?</h3>
+
+<div class="step step-0"><!-- begin step -->
+<h4>❌ Non, on ne réécrit pas GDAL</h4>
+<p>C++, 200+ formats, 25 ans de corrections de bugs</p>
+</div><!-- end step -->
+
+<div class="step step-1"><!-- begin step -->
+<h4>🎯 Le bug n'est pas dans GDAL, mais dans un <code>zlib</code> embarqué</h4>
+</div><!-- end step -->
+
+<div class="step step-2"><!-- begin step -->
+<h4>🛠️ Réduire le périmètre</h4>
+<ul>
+<li><strong>mettre à jour</strong> — GDAL ≥ 3.11.0</li>
+<li><strong>isoler</strong> — <span lang="en">sandbox</span>, WASM</li>
+<li><strong>remplacer</strong> le composant C — <a href="https://trifectatech.org/blog/zlib-rs-is-faster-than-c/">zlib-rs</a> : <span lang="en">memory-safe</span> <strong>et</strong> le plus rapide</li>
+</ul>
+</div><!-- end step -->
+
+<div class="step step-3"><!-- begin step -->
+<h4>📉 Écrire le neuf en Rust</h4>
+<p>Android : <strong>76% → 24%</strong> des vulnérabilités mémoire <small>(2019-2024)</small></p>
+<p>sans réécrire l'ancien code — en géo, <a href="https://georust.org/">GeoRust</a></p>
+</div><!-- end step -->
+
+<div class="step step-4"><!-- begin step -->
+<div class="punchline">
+    <strong>On n'a pas besoin de RIIR de tout.<br>Il faut RIIR ce qui compte.</strong>
+</div>
+</div><!-- end step -->
+</article></section></div><div class="toboggan-slide" id="slide-36"><section class="no_title spread-steps standard"><h2>5.4 Et si on pouvait...</h2><article><h3>🙌 Projets parallèles</h3>
 
 <div class="step step-0"><!-- begin step -->
 <h4>💡 Occasion de faire différent</h4>
 <ul>
 <li><a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> : ~grep, mais amélioré (10x)</li>
 <li><a href="https://github.com/jj-vcs/jj">jj (Jujutsu)</a> : <abbr title="Distributed version control systems">DVCS</abbr> compatible avec Git</li>
-<li><a href="https://helix-editor.com/">Helix</a>, <a href="https://zed.dev/">Zed</a>: éditeurs de code</li>
+<li><a href="https://helix-editor.com/">Helix</a>, <a href="https://zed.dev/">Zed</a> (1.0): éditeurs de code</li>
 <li><a href="https://www.nushell.sh/">Nushell</a>: shell</li>
-<li><a href="https://typst.app/">Typst</a>: LaTex moderne</li>
+<li><a href="https://typst.app/">Typst</a>: LaTeX moderne</li>
+<li><a href="https://github.com/astral-sh/uv">uv</a>, <a href="https://biomejs.dev/">Biome</a>: outillage Python &amp; JS</li>
 <li>...</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title step-line-through spread-steps part" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-37"><section class="no_title step-line-through spread-steps part" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1810,11 +2372,11 @@ background-position:
     52% 38%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    12vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    7.2rem
     ;
 background-repeat:
     no-repeat,
@@ -1840,15 +2402,16 @@ h2 {
 </style>
 
 <div class="step step-0"><!-- begin step -->
-<h2>Nouveau project en Rust ?</h2>
+<h2>Nouveau projet en Rust ?</h2>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
 <h2>Y a-t-il une bonne raison pour<br> ne pas le faire ?</h2>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title step-line-through spread-steps standard"><h2>6.1 Constat</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-38"><section class="no_title step-line-through spread-steps standard"><h2>6.1 Constat</h2><article><style>
 article {
-    margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>Pourquoi ne fait-on pas de Rust?</h3>
@@ -1874,7 +2437,7 @@ article {
     ➡ 😔 Ce n'est pas un choix technique
 </div>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title standard" style="margin: 1rem 1rem 0; width: calc(100% - 2rem); min-height: calc(100% - 2rem);"><h2>6.2 Me</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-39"><section class="no_title standard" style="margin: 1rem 1rem 0; width: calc(100% - 2rem); min-height: calc(100% - 2rem);"><h2>6.2 Me</h2><article><style>
 h3 {
     flex: 0 0 auto;
 }
@@ -1914,9 +2477,10 @@ h3 {
 </style>
 <h3><strong>Igor Laborie</strong><br>Founding Engineer @ <a href="https://www.darwindata.ai/">Darwin Data</a></h3>
 <div class="auto-carousel"></div>
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>6.3 Startup</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-40"><section class="no_title spread-steps standard"><h2>6.3 Startup</h2><article><style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
 }
 </style>
 <h3>🌱 Rust en Startup</h3>
@@ -1935,11 +2499,18 @@ article {
 <li>Profitez de l'image positive sécurité, efficacité, performance de Rust</li>
 </ul>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title spread-steps standard"><h2>6.4 Action</h2><article><style>
+</article></section></div><div class="toboggan-slide" id="slide-41"><section class="no_title spread-steps standard"><h2>6.4 Action</h2><article><style>
+
+/* Chrome's UA margin for `figure` is a fixed 40px, which alone would not follow
+   the deck's viewport scale (see public/style.css); 1.25rem is that same 40px on
+   the 1920x1080 canvas. */
+figure {
+    margin-inline: 1.25rem;
+}
 
 .rustacean {
     width: 3em;
-    margin-top: 0;
+    margin-block: 0;
 }
 
 .action {
@@ -1961,17 +2532,20 @@ article {
 
 <div class="step step-2"><!-- begin step -->
 <h4>💬 Partager, 🐝 Essaimer</h4>
+<ul>
+<li>Rust Toulouse: <a href="https://www.meetup.com/rust-community-toulouse/">https://www.meetup.com/rust-community-toulouse/</a></li>
+</ul>
 </div><!-- end step -->
 
 <div class="step step-3"><!-- begin step -->
 <div class="action">
     <figure class="rustacean">
-        <img src="./public/items/animal_crabe.svg">
+        <img src="public/items/animal_crabe.svg">
     </figure>
     <strong>Devenez rustacés !</strong>
 </div>
 </div><!-- end step -->
-</article></section></div><div class="toboggan-slide"><section class="no_title slide-end standard" style="margin-top: 0;
+</article></section></div><div class="toboggan-slide" id="slide-42"><section class="no_title slide-end standard" style="margin-top: 0;
 min-height: 100%;
 width: 100%;
 overflow: hidden;
@@ -1984,8 +2558,8 @@ background-position:
     7% 27%
     ;
 background-size:
-    30vw,
-    15vw
+    18rem,
+    9rem
     ;
 background-repeat:
     no-repeat,
@@ -2001,7 +2575,7 @@ background-repeat:
 .quote {
     display: flex;
     flex-direction: column;
-    max-width: 60vw;
+    max-width: 36rem;
     margin: 0 auto;
     text-shadow: 1px 1px white;
 }
@@ -2041,7 +2615,7 @@ flex-direction: column;
 .table {
   display: grid;
   justify-content: center;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2em;
   justify-items: center;
 
@@ -2049,10 +2623,6 @@ flex-direction: column;
     display: flex;
     flex-direction: column;
     align-self: center;
-  }
-
-  img {
-    height: 25vh;
   }
 }
 
@@ -2075,6 +2645,136 @@ flex-direction: column;
 </div>
 </article></section></div>
     </main>
+    <script>
+// Keyboard navigation for a deck exported with `toboggan build -o deck.html`.
+//
+// The export is every slide of the deck in one file. Without this it is a page
+// you scroll, with every reveal step already on screen — which is also what
+// `action.yml` publishes to GitHub Pages. With it, the file is a presentation:
+// one slide at a time, steps revealed as you go, driven by the same keys as
+// every other Toboggan client.
+//
+// Everything it does is gated on the `toboggan-js` class it adds to <html>, and
+// the matching CSS is `@media screen` only. So a file opened with scripting off,
+// or sent to a printer, is still the whole deck in order — which is what the PDF
+// export depends on.
+(() => {
+	const slides = [...document.querySelectorAll(".toboggan-slide")];
+	if (slides.length === 0) {
+		return;
+	}
+	document.documentElement.classList.add("toboggan-js");
+
+	let slideIndex = 0;
+	// How many steps of the current slide have been revealed, matching the web
+	// client: 0 is none, 1 is the first one showing.
+	let revealed = 0;
+
+	const stepsOf = (index) => [...slides[index].querySelectorAll(".step")];
+
+	function render() {
+		slides.forEach((slide, index) =>
+			slide.classList.toggle("current", index === slideIndex),
+		);
+		stepsOf(slideIndex).forEach((step, index) => {
+			step.classList.toggle("step-done", index < revealed);
+			step.classList.toggle("step-current", index + 1 === revealed);
+		});
+		// replaceState rather than assigning location.hash: the URL should always
+		// name the slide on screen, so it can be copied or bookmarked mid-talk —
+		// but not by turning every keystroke into a history entry to back out of.
+		history.replaceState(null, "", `#slide-${slideIndex + 1}`);
+	}
+
+	function goToSlide(index, atLastStep) {
+		slideIndex = Math.max(0, Math.min(index, slides.length - 1));
+		revealed = atLastStep ? stepsOf(slideIndex).length : 0;
+		render();
+	}
+
+	function nextStep() {
+		if (revealed < stepsOf(slideIndex).length) {
+			revealed += 1;
+			render();
+		} else if (slideIndex < slides.length - 1) {
+			goToSlide(slideIndex + 1, false);
+		}
+	}
+
+	function previousStep() {
+		if (revealed > 0) {
+			revealed -= 1;
+			render();
+		} else if (slideIndex > 0) {
+			// Stepping back into a slide lands on its last step, not its first:
+			// the presenter is retracing what the room has already seen.
+			goToSlide(slideIndex - 1, true);
+		}
+	}
+
+	function toggleFullscreen() {
+		if (document.fullscreenElement) {
+			document.exitFullscreen();
+		} else {
+			document.documentElement.requestFullscreen().catch((error) => {
+				// An empty catch here left the presenter pressing `f` in front of
+				// the room with no way to tell "the key is not bound" from "the
+				// browser said no" — which it does for a missing user gesture, a
+				// `fullscreen` permissions-policy in an iframe, or Safari on a
+				// non-video element.
+				console.error("Toboggan: the browser refused fullscreen", error);
+			});
+		}
+	}
+
+	const actions = {
+		ArrowRight: () => goToSlide(slideIndex + 1, false),
+		ArrowLeft: () => goToSlide(slideIndex - 1, false),
+		ArrowDown: nextStep,
+		ArrowUp: previousStep,
+		" ": nextStep,
+		// What a presenter remote sends. Bound to the steps, so the remote walks
+		// the whole deck instead of skipping every reveal on the way.
+		PageDown: nextStep,
+		PageUp: previousStep,
+		Backspace: previousStep,
+		Home: () => goToSlide(0, false),
+		End: () => goToSlide(slides.length - 1, false),
+		f: toggleFullscreen,
+		F: toggleFullscreen,
+	};
+
+	addEventListener("keydown", (event) => {
+		// A modified key belongs to the browser, not the deck. Without this,
+		// Cmd+F and Ctrl+F toggled fullscreen and swallowed find-in-page — the
+		// main way anyone navigates a single-file export.
+		if (event.ctrlKey || event.metaKey || event.altKey) {
+			return;
+		}
+		const action = actions[event.key];
+		if (!action) {
+			return;
+		}
+		// Every one of these keys already means something to the browser: space
+		// and the arrows scroll, PageUp/PageDown page, Backspace used to go back.
+		event.preventDefault();
+		action();
+	});
+
+	function slideFromHash() {
+		const number = Number.parseInt(location.hash.replace("#slide-", ""), 10);
+		return Number.isNaN(number) ? 0 : number - 1;
+	}
+
+	// Following a link to `#slide-12`, or editing the URL by hand, is a jump.
+	// `render` writes the hash with replaceState, which deliberately does not
+	// fire this — so there is no loop to break.
+	addEventListener("hashchange", () => goToSlide(slideFromHash(), false));
+
+	goToSlide(slideFromHash(), false);
+})();
+
+    </script>
 </body>
 
 </html>

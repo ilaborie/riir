@@ -21,11 +21,11 @@ background-position:
     52% 35%
     ;
 background-size:
-    30vw,
-    15vw,
-    10vw,
-    10vw,
-    19vw
+    18rem,
+    9rem,
+    6rem,
+    6rem,
+    11.4rem
     ;
 background-repeat:
     no-repeat,

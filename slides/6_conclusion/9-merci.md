@@ -16,8 +16,8 @@ background-position:
     7% 27%
     ;
 background-size:
-    30vw,
-    15vw
+    18rem,
+    9rem
     ;
 background-repeat:
     no-repeat,
@@ -36,7 +36,7 @@ background-repeat:
 .quote {
     display: flex;
     flex-direction: column;
-    max-width: 60vw;
+    max-width: 36rem;
     margin: 0 auto;
     text-shadow: 1px 1px white;
 }
@@ -76,7 +76,7 @@ flex-direction: column;
 .table {
   display: grid;
   justify-content: center;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2em;
   justify-items: center;
 
@@ -84,10 +84,6 @@ flex-direction: column;
     display: flex;
     flex-direction: column;
     align-self: center;
-  }
-
-  img {
-    height: 25vh;
   }
 }
 
