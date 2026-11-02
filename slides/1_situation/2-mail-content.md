@@ -60,7 +60,7 @@ figure {
     gap: 1em;
 
     /* The inline SVGs carry a 24px intrinsic size, which would stay 24px at
-       every resolution — size them against the text instead. */
+       every resolution - size them against the text instead. */
     img {
         width: 1em;
         height: 1em;
@@ -159,7 +159,7 @@ Cordialement,<br>
 GDAL est partout : PostGIS, QGIS, Python (rasterio, fiona), tous les pipelines géo.
 
 CVE-2026-4738, publiée le 24 mars 2026.
-CVSS 4.0 : 9.4 — critique. Affecte GDAL < 3.11.0.
+CVSS 4.0 : 9.4 - critique. Affecte GDAL < 3.11.0.
 
 Le détail qui compte pour la suite du talk :
 le bug n'est pas dans le code géospatial de GDAL,

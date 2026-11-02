@@ -231,13 +231,13 @@ main {
    slide's own padding are all relative to it.
 
    It was a flat 32px, so a deck laid out for a 1920x1080 projector kept those
-   exact pixels on a 1024x768 one — where the same slide is 47% narrower. Code
+   exact pixels on a 1024x768 one - where the same slide is 47% narrower. Code
    blocks ran off the right edge and the last lines fell off the bottom, with
    nothing to scroll.
 
    Now it tracks the smaller of the two viewport dimensions, so a slide keeps
-   the same proportions — the same characters per line, the same lines per
-   slide — whatever it is shown on. The 32px ceiling is the old value: at
+   the same proportions - the same characters per line, the same lines per
+   slide - whatever it is shown on. The 32px ceiling is the old value: at
    1920x1080 `min()` yields exactly 32px, so nothing changes at or above the
    size decks were built for, and only smaller screens are affected. The floor
    keeps a very small window legible rather than merely correct. */
@@ -302,8 +302,8 @@ h6 {
 }
 
 /* Sizes go through custom properties so a deck can retune them from
-   `_head.html`. Descendant selectors cannot reach in here — this shadow tree is
-   closed to them — but custom properties inherit across the boundary, so
+   `_head.html`. Descendant selectors cannot reach in here - this shadow tree is
+   closed to them - but custom properties inherit across the boundary, so
    `.toboggan-slide { --slide-h1-size: 220% }` in the light DOM works. The
    fallback keeps the default without a `:host` declaration to be overridden. */
 h1 {
@@ -333,7 +333,7 @@ h6 {
 	font-size: var(--slide-h6-size, 105%);
 }
 
-/* `list-style: none` alone left the UA's `padding-inline-start: 40px` in place —
+/* `list-style: none` alone left the UA's `padding-inline-start: 40px` in place -
    a fixed pixel length in a tree where every other size is relative, so a deck
    scaled to the projector's resolution saw its lists drift right as the screen
    got smaller. The light DOM never had it (`reset.css` zeroes padding on
@@ -369,7 +369,7 @@ pre code {
 }
 
 /* Tables had no size of their own, so they rendered at the 32px body size and
-   a reference table of eight rows overflowed the slide. Still 100% by default —
+   a reference table of eight rows overflowed the slide. Still 100% by default -
    decks opt into something denser. */
 table {
 	font-size: var(--slide-table-size, 100%);
@@ -377,7 +377,7 @@ table {
 
 /* A Mermaid diagram, drawn to SVG while the deck built. The SVG carries its own
    pixel width and height, so without this a diagram wider than the slide simply
-   spills off the side rather than scaling down — `height: auto` keeps the aspect
+   spills off the side rather than scaling down - `height: auto` keeps the aspect
    ratio while `max-width` does the clamping. */
 .mermaid {
 	display: flex;
@@ -394,7 +394,7 @@ table {
 }
 
 /* `mermaid:width=…` asked for a size, so the diagram fills it rather than
-   stopping at its own pixel width — the same thing the fence does in the PDF,
+   stopping at its own pixel width - the same thing the fence does in the PDF,
    where `image(…, width: …)` scales both ways. */
 .mermaid-sized svg {
 	width: 100%;
@@ -403,8 +403,8 @@ table {
 /* Layout */
 /* Width goes through a custom property for the same reason the type sizes do,
    plus one this shadow tree cannot solve on its own: `vw` is the *viewport*, so
-   a slide rendered into a pane rather than a whole screen — the presenter
-   view's two previews — laid itself out wider than the box it was in and spilled
+   a slide rendered into a pane rather than a whole screen - the presenter
+   view's two previews - laid itself out wider than the box it was in and spilled
    out of it. Those panes set `--slide-width: 100%`. */
 section {
 	margin: 1rem auto 0;
@@ -465,7 +465,7 @@ code {
 	padding: 0 0.125em;
 }
 
-/* Keyboard keys (<kbd>) — physical 3D key cap.
+/* Keyboard keys (<kbd>) - physical 3D key cap.
    Customize via the --kbd-* custom properties (see main.css :root). */
 kbd {
 	display: inline-block;
@@ -738,7 +738,7 @@ main {
 		}
 
 		/* And its links have to work. `.step a` is `pointer-events: none` so a
-		   link cannot be clicked before it is revealed — but nothing reveals
+		   link cannot be clicked before it is revealed - but nothing reveals
 		   anything here, which left every link in a step dead. */
 		.step a {
 			pointer-events: auto;
@@ -748,7 +748,7 @@ main {
 
 /* With the navigator running: one slide at a time, steps revealed as you go.
    Gated on the class the script adds, and screen-only, so a file opened with
-   scripting off — or sent to a printer — is still the whole deck in order. */
+   scripting off - or sent to a printer - is still the whole deck in order. */
 @media screen {
 	html.toboggan-js {
 		body {
@@ -1038,7 +1038,7 @@ figure {
     gap: 1em;
 
     /* The inline SVGs carry a 24px intrinsic size, which would stay 24px at
-       every resolution — size them against the text instead. */
+       every resolution - size them against the text instead. */
     img {
         width: 1em;
         height: 1em;
@@ -1057,7 +1057,7 @@ figure {
 
 .mail .body {
     font-family: Inconsolata Nerd Font Mono, system-ui, -apple-system, sans-serif;
-    
+
     .score {
         color: firebrick;
         font-family: var(--font-slide-mono);
@@ -1188,7 +1188,7 @@ article {
       font-size: .5rem;
 
       /* The inline SVG carries a 24px intrinsic size, which would stay 24px at
-         every resolution — size it against the text instead. */
+         every resolution - size it against the text instead. */
       img {
         width: 1.5em;
         height: 1.5em;
@@ -1250,7 +1250,7 @@ hr {
 .card-body {
   padding: .25em .75em;
   h3 {
-    font-size: 110%; 
+    font-size: 110%;
   }
 }
 .labels {
@@ -1572,7 +1572,7 @@ article {
 <h4>🔑 Propriété et emprunt</h4>
 <ul>
 <li><code>T</code> : transfert de propriété (<span lang="en">move</span>)</li>
-<li><code>&amp;T</code> : emprunt partagé — <code>&amp;mut T</code> : emprunt exclusif</li>
+<li><code>&amp;T</code> : emprunt partagé - <code>&amp;mut T</code> : emprunt exclusif</li>
 <li><abbr title="Resource Acquisition Is Initialization">RAII</abbr> : libération déterministe (<code>Drop</code>)</li>
 </ul>
 <p><small>Une seule règle : plusieurs lecteurs, <strong>ou</strong> un seul écrivain. Jamais les deux.</small></p>
@@ -1834,7 +1834,7 @@ article {
 <li><a href="https://slint.rs/">slint</a></li>
 <li><a href="https://www.gpui.rs/">gpui</a></li>
 <li><a href="https://github.com/iced-rs/iced">Iced</a></li>
-<li><a href="https://github.com/linebender/xilem/">Xilem</a>, <a href="https://github.com/linebender/xilem/tree/main/masonry">Masonry</a>, <a href="https://github.com/linebender/vello">Vello</a> — <a href="https://linebender.org/">Linebender</a>, ...</li>
+<li><a href="https://github.com/linebender/xilem/">Xilem</a>, <a href="https://github.com/linebender/xilem/tree/main/masonry">Masonry</a>, <a href="https://github.com/linebender/vello">Vello</a> - <a href="https://linebender.org/">Linebender</a>, ...</li>
 </ul>
 </div><!-- end step -->
 
@@ -2024,7 +2024,7 @@ article {
 
 <div class="step step-0"><!-- begin step -->
 <h4>🏗️ Un cœur en Rust, deux UI natives</h4>
-<p>La logique métier une seule fois — SwiftUI d'un côté, Jetpack Compose de l'autre</p>
+<p>La logique métier une seule fois - SwiftUI d'un côté, Jetpack Compose de l'autre</p>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
@@ -2074,7 +2074,7 @@ article {
 
 <div class="step step-2"><!-- begin step -->
 <h4>🛠️ Et l'outillage aussi</h4>
-<p><a href="https://github.com/astral-sh/uv">uv</a>, <a href="https://astral.sh/ruff">ruff</a>, <a href="https://astral.sh/blog/ty">ty</a> — <a href="https://astral.sh/blog/openai">Astral a rejoint OpenAI</a> en mars 2026</p>
+<p><a href="https://github.com/astral-sh/uv">uv</a>, <a href="https://astral.sh/ruff">ruff</a>, <a href="https://astral.sh/blog/ty">ty</a> - <a href="https://astral.sh/blog/openai">Astral a rejoint OpenAI</a> en mars 2026</p>
 </div><!-- end step -->
 </article></section></div><div class="toboggan-slide" id="slide-29"><section class="no_title spread-steps standard"><h2>4.5 Interop</h2><article><style>
 article {
@@ -2266,7 +2266,7 @@ article {
 
 <div class="step step-0"><!-- begin step -->
 <h4>🧗 Par composants</h4>
-<p>Un composant à la fois — Firefox, <a href="https://github.com/RediSearch/RediSearch">RediSearch</a></p>
+<p>Un composant à la fois - Firefox, <a href="https://github.com/RediSearch/RediSearch">RediSearch</a></p>
 </div><!-- end step -->
 
 <div class="step step-1"><!-- begin step -->
@@ -2281,9 +2281,9 @@ article {
 <h4>🏗️ Trois échelles</h4>
 <div class="scale">
 <ul>
-<li>une <strong>dépendance</strong> — <a href="https://bughunters.google.com/blog/scaling-memory-safety">Google, <code>giflib</code></a> : perf neutre, millions de tests</li>
-<li><strong>tout</strong> le code — <a href="https://bun.com/blog/bun-in-rust">Bun</a> : 535 000 lignes Zig → Rust en <strong>11 jours</strong></li>
-<li>une <strong>réimplémentation</strong> — <a href="https://github.com/malisper/pgrust">pgrust</a> : Postgres, 46 066 tests <small>(pas pour la prod)</small></li>
+<li>une <strong>dépendance</strong> - <a href="https://bughunters.google.com/blog/scaling-memory-safety">Google, <code>giflib</code></a> : perf neutre, millions de tests</li>
+<li><strong>tout</strong> le code - <a href="https://bun.com/blog/bun-in-rust">Bun</a> : 535 000 lignes Zig → Rust en <strong>11 jours</strong></li>
+<li>une <strong>réimplémentation</strong> - <a href="https://github.com/malisper/pgrust">pgrust</a> : Postgres, 46 066 tests <small>(pas pour la prod)</small></li>
 </ul>
 </div>
 </div><!-- end step -->
@@ -2322,16 +2322,16 @@ article {
 <div class="step step-2"><!-- begin step -->
 <h4>🛠️ Réduire le périmètre</h4>
 <ul>
-<li><strong>mettre à jour</strong> — GDAL ≥ 3.11.0</li>
-<li><strong>isoler</strong> — <span lang="en">sandbox</span>, WASM</li>
-<li><strong>remplacer</strong> le composant C — <a href="https://trifectatech.org/blog/zlib-rs-is-faster-than-c/">zlib-rs</a> : <span lang="en">memory-safe</span> <strong>et</strong> le plus rapide</li>
+<li><strong>mettre à jour</strong> - GDAL ≥ 3.11.0</li>
+<li><strong>isoler</strong> - <span lang="en">sandbox</span>, WASM</li>
+<li><strong>remplacer</strong> le composant C - <a href="https://trifectatech.org/blog/zlib-rs-is-faster-than-c/">zlib-rs</a> : <span lang="en">memory-safe</span> <strong>et</strong> le plus rapide</li>
 </ul>
 </div><!-- end step -->
 
 <div class="step step-3"><!-- begin step -->
 <h4>📉 Écrire le neuf en Rust</h4>
 <p>Android : <strong>76% → 24%</strong> des vulnérabilités mémoire <small>(2019-2024)</small></p>
-<p>sans réécrire l'ancien code — en géo, <a href="https://georust.org/">GeoRust</a></p>
+<p>sans réécrire l'ancien code - en géo, <a href="https://georust.org/">GeoRust</a></p>
 </div><!-- end step -->
 
 <div class="step step-4"><!-- begin step -->
@@ -2631,7 +2631,7 @@ flex-direction: column;
   <blockquote>
     <p>Soyez donc résolus à ne plus<br> servir et vous serez libres.</p>
     <footer>
-      — Étienne de La Boétie
+      - Étienne de La Boétie
       - <cite>Discours de la servitude volontaire (1576)</cite>
     </footer>
   </blockquote>
@@ -2649,14 +2649,14 @@ flex-direction: column;
 // Keyboard navigation for a deck exported with `toboggan build -o deck.html`.
 //
 // The export is every slide of the deck in one file. Without this it is a page
-// you scroll, with every reveal step already on screen — which is also what
+// you scroll, with every reveal step already on screen - which is also what
 // `action.yml` publishes to GitHub Pages. With it, the file is a presentation:
 // one slide at a time, steps revealed as you go, driven by the same keys as
 // every other Toboggan client.
 //
 // Everything it does is gated on the `toboggan-js` class it adds to <html>, and
 // the matching CSS is `@media screen` only. So a file opened with scripting off,
-// or sent to a printer, is still the whole deck in order — which is what the PDF
+// or sent to a printer, is still the whole deck in order - which is what the PDF
 // export depends on.
 (() => {
 	const slides = [...document.querySelectorAll(".toboggan-slide")];
@@ -2681,7 +2681,7 @@ flex-direction: column;
 			step.classList.toggle("step-current", index + 1 === revealed);
 		});
 		// replaceState rather than assigning location.hash: the URL should always
-		// name the slide on screen, so it can be copied or bookmarked mid-talk —
+		// name the slide on screen, so it can be copied or bookmarked mid-talk -
 		// but not by turning every keystroke into a history entry to back out of.
 		history.replaceState(null, "", `#slide-${slideIndex + 1}`);
 	}
@@ -2719,7 +2719,7 @@ flex-direction: column;
 			document.documentElement.requestFullscreen().catch((error) => {
 				// An empty catch here left the presenter pressing `f` in front of
 				// the room with no way to tell "the key is not bound" from "the
-				// browser said no" — which it does for a missing user gesture, a
+				// browser said no" - which it does for a missing user gesture, a
 				// `fullscreen` permissions-policy in an iframe, or Safari on a
 				// non-video element.
 				console.error("Toboggan: the browser refused fullscreen", error);
@@ -2746,7 +2746,7 @@ flex-direction: column;
 
 	addEventListener("keydown", (event) => {
 		// A modified key belongs to the browser, not the deck. Without this,
-		// Cmd+F and Ctrl+F toggled fullscreen and swallowed find-in-page — the
+		// Cmd+F and Ctrl+F toggled fullscreen and swallowed find-in-page - the
 		// main way anyone navigates a single-file export.
 		if (event.ctrlKey || event.metaKey || event.altKey) {
 			return;
@@ -2768,7 +2768,7 @@ flex-direction: column;
 
 	// Following a link to `#slide-12`, or editing the URL by hand, is a jump.
 	// `render` writes the hash with replaceState, which deliberately does not
-	// fire this — so there is no loop to break.
+	// fire this - so there is no loop to break.
 	addEventListener("hashchange", () => goToSlide(slideFromHash(), false));
 
 	goToSlide(slideFromHash(), false);

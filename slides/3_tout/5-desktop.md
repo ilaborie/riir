@@ -19,7 +19,7 @@ article {
 - [slint](https://slint.rs/)
 - [gpui](https://www.gpui.rs/)
 - [Iced](https://github.com/iced-rs/iced)
-- [Xilem](https://github.com/linebender/xilem/), [Masonry](https://github.com/linebender/xilem/tree/main/masonry), [Vello](https://github.com/linebender/vello) — [Linebender](https://linebender.org/), ...
+- [Xilem](https://github.com/linebender/xilem/), [Masonry](https://github.com/linebender/xilem/tree/main/masonry), [Vello](https://github.com/linebender/vello) - [Linebender](https://linebender.org/), ...
 
 <!-- pause -->
 
@@ -45,14 +45,14 @@ toute la pile 2D en Rust, et chaque brique est utilisable séparément :
 - Parley : mise en page de texte riche (+ Fontique pour le fallback de fontes)
 - Kurbo : courbes de Bézier et géométrie de chemins
 C'est l'héritage de Druid, désormais en maintenance passive.
-Ces crates servent bien au-delà de Xilem — Vello est utilisé par Bevy.
+Ces crates servent bien au-delà de Xilem - Vello est utilisé par Bevy.
 <https://linebender.org/>
 
 Zed 1.0 : sorti le 29 avril 2026, sur GPUI, son propre framework
 UI écrit en Rust. Un IDE qui atteint sa 1.0, pas une préversion.
 
 COSMIC Epoch 1 : sorti le 11 décembre 2025 avec Pop!_OS 24.04 LTS.
-Un environnement de bureau complet, écrit from scratch en Rust —
+Un environnement de bureau complet, écrit from scratch en Rust -
 pas un composant, tout l'environnement.
 
 Avantages :

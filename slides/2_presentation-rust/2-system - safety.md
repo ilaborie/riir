@@ -39,7 +39,7 @@ article {
 🧰 Les outils, dans l'ordre de la chaîne :
 - miri : interpréteur qui détecte l'UB dans le code `unsafe`
 - rustsec / `cargo audit` : les CVE connues de vos dépendances
-- cargo-vet (Mozilla) : l'étape d'après — tracer QUI a audité chaque
+- cargo-vet (Mozilla) : l'étape d'après - tracer QUI a audité chaque
   dépendance, et mutualiser ces audits entre organisations.
   On revient au mail du début : le RSSI parle de BOM et d'audit.
   cargo-vet, c'est exactement cette réponse-là, intégrée à cargo.

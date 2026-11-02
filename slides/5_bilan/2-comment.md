@@ -23,7 +23,7 @@ article {
 
 #### 🧗 Par composants
 
-Un composant à la fois — Firefox, [RediSearch](https://github.com/RediSearch/RediSearch)
+Un composant à la fois - Firefox, [RediSearch](https://github.com/RediSearch/RediSearch)
 
 <!-- pause -->
 
@@ -34,28 +34,28 @@ Un composant à la fois — Firefox, [RediSearch](https://github.com/RediSearch/
 
 <!-- pause -->
 
-#### 🏗️ Trois échelles
+#### Des exemples
 
 <div class="scale">
 
-- une **dépendance** — [Google, `giflib`](https://bughunters.google.com/blog/scaling-memory-safety) : perf neutre, millions de tests
-- **tout** le code — [Bun](https://bun.com/blog/bun-in-rust) : 535 000 lignes Zig → Rust en **11 jours**
-- une **réimplémentation** — [pgrust](https://github.com/malisper/pgrust) : Postgres, 46 066 tests <small>(pas pour la prod)</small>
+- [Google, `giflib`](https://bughunters.google.com/blog/scaling-memory-safety) : perf neutre, millions de tests
+- [Bun](https://bun.com/blog/bun-in-rust) : 535 000 lignes Zig → Rust en **11 jours**
+- [pgrust](https://github.com/malisper/pgrust) : Postgres, 46 066 tests
 
 </div>
 
 <!-- pause -->
 
-#### ⚠️ Deux pièges
+#### ⚠️ Des pièges
 
-- le **`unsafe`** : un port mécanique = du C déguisé en Rust
-- l'**oracle** : écrire le Rust n'est plus le goulot, **prouver l'équivalence** l'est
+- Génération avec des **`unsafe`** (du C déguisé en Rust)
+- Comment prouver l'équivalence ?
 
 <!-- notes -->
 
 Le talk dit *pourquoi* et *quoi*. Voici *comment*.
 
-🧗 Par composants — et ça reste partiel, c'est ça le point
+🧗 Par composants - et ça reste partiel, c'est ça le point
 La méthode Firefox / « oxidation » : on ne big-bang pas.
 Un composant, une interface stable, on remplace derrière.
 
@@ -65,12 +65,12 @@ Personne ne prévoit de réécrire Firefox en entier, ni Redis.
 L'état partiel n'est pas une étape, c'est la destination.
 (Et ça prépare le slide suivant : reste à choisir QUOI réécrire.)
 
-🔍 RediSearch — l'exemple le plus parlant, et il est en cours
+🔍 RediSearch - l'exemple le plus parlant, et il est en cours
 C'est le moteur de requêtes / recherche de Redis, et depuis Redis 8
 il est intégré à Redis, ce n'est plus un module optionnel.
 Mainmatter (Luca Palmieri) le migre du C vers Rust, un module à la fois.
 Le chiffre à lâcher : dans le dépôt, Rust est AUJOURD'HUI le premier
-langage — ~6,95 Mo de Rust contre ~5,15 Mo de C. Rust a dépassé C.
+langage - ~6,95 Mo de Rust contre ~5,15 Mo de C. Rust a dépassé C.
 Et pourtant personne ne réécrit Redis : Redis lui-même reste en C.
 On réécrit le moteur de recherche à l'intérieur, pas le produit.
 
@@ -86,7 +86,7 @@ On réécrit le moteur de recherche à l'intérieur, pas le produit.
   21% de tests qui passent, et surtout 69,6% des lignes en `unsafe`.
   On a déplacé le problème, pas résolu.
   Les approches agentiques (LLM + analyse statique + boucle de compilation)
-  descendent à 0,06% d'unsafe et 92% de tests qui passent — même benchmark.
+  descendent à 0,06% d'unsafe et 92% de tests qui passent - même benchmark.
   (Attention : ne jamais comparer des chiffres de benchmarks différents.)
 
   ⚠️ Précision si on pose la question « c2rust utilise un LLM ? » :
@@ -110,13 +110,13 @@ On réécrit le moteur de recherche à l'intérieur, pas le produit.
   « Lost in Translation », étude empirique des bugs de traduction par LLM
   <https://alirezai.cs.illinois.edu/assets/pdf/plempirical.pdf>
 
-🏗️ Les trois échelles — c'est le cœur du slide
+🏗️ Les trois échelles - c'est le cœur du slide
 
 🐜 Google, giflib (Max Hils & Bastian Kersting)
 « AI-Assisted Rewrites of C/C++ Dependencies to Rust ».
 On ne réécrit pas le produit : on réécrit LA DÉPENDANCE C à risque.
 Validé par des millions de tests, performance neutre.
-C'est exactement ce qu'on ferait pour le zlib de GDAL — cf. slide suivant.
+C'est exactement ce qu'on ferait pour le zlib de GDAL - cf. slide suivant.
 
 🍞 Bun (8 juillet 2026)
 535 496 lignes de Zig → Rust, du 3 au 14 mai 2026. 11 jours.
@@ -142,10 +142,10 @@ Le README annonce des perfs spectaculaires, mais dit aussi noir sur blanc :
 « not production ready, do not put data you care about in it ».
 À présenter comme une démonstration de faisabilité, pas comme un remplaçant.
 
-☢️ Piège n°1 : le `unsafe` — le contre-argument le plus sérieux
+☢️ Piège n°1 : le `unsafe` - le contre-argument le plus sérieux
 Un RIIR raté ne donne pas du Rust, il donne du C avec une syntaxe Rust.
 c2rust : 69,6% des lignes en `unsafe` sur CRUST-Bench.
-⚠️ CE CHIFFRE N'EST PLUS SUR LE SLIDE — le dire à l'oral,
+⚠️ CE CHIFFRE N'EST PLUS SUR LE SLIDE - le dire à l'oral,
 c'est lui qui rend le piège concret.
 On a payé le coût de la réécriture SANS acheter la sécurité mémoire.
 
@@ -158,12 +158,12 @@ pour les optimisations SIMD. Ce qui compte, c'est la SURFACE :
 quelques centaines de lignes auditables, encapsulées derrière une API sûre,
 ce n'est pas 70% du code.
 Bun l'assume aussi : portage mécanique d'abord, idiomatique après la 1.4.
-La dette est explicite et datée — c'est ça, la bonne façon de la prendre.
+La dette est explicite et datée - c'est ça, la bonne façon de la prendre.
 
 Question à se poser après un RIIR assisté :
 « combien de lignes `unsafe`, et est-ce que je peux les relire toutes ? »
 
-🎯 Piège n°2 : l'oracle — LE point à faire passer
+🎯 Piège n°2 : l'oracle - LE point à faire passer
 Regardez ce que les trois ont en commun. Ce n'est pas le modèle utilisé,
 ni le langage de départ. C'est le HARNAIS DE TEST :
 - giflib : des millions de tests
@@ -178,4 +178,4 @@ snapshots : c'est là que passe le vrai travail.
 Sans oracle, un RIIR assisté par LLM ne fait que déplacer les bugs.
 
 Et ça prépare le slide suivant : si vous n'avez pas l'oracle,
-vous ne réécrivez pas — vous isolez et vous écrivez le neuf en Rust.
+vous ne réécrivez pas - vous isolez et vous écrivez le neuf en Rust.

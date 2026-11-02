@@ -23,13 +23,11 @@ article {
 
 <!-- pause -->
 
-#### 🔑 Propriété et emprunt
+#### 🔑 <span lang="en">Ownership</span> et <span lang="en">Borrowing</span>
 
-- `T` : transfert de propriété (<span lang="en">move</span>)
-- `&T` : emprunt partagé — `&mut T` : emprunt exclusif
-- <abbr title="Resource Acquisition Is Initialization">RAII</abbr> : libération déterministe (`Drop`)
-
-<small>Une seule règle : plusieurs lecteurs, **ou** un seul écrivain. Jamais les deux.</small>
+- `T` : transfert de propriété
+- `&T` : emprunt partagé, `&mut T` : emprunt exclusif
+- <abbr title="Resource Acquisition Is Initialization">RAII</abbr> : libération déterministe `Drop`
 
 <!-- pause -->
 
@@ -49,18 +47,18 @@ Mais pas d'héritage (OOP)
 Typage proche FP
 Mais Zero cost
 
-🔑 Propriété et emprunt — à dire : ça sert D'ABORD en mono-thread
+🔑 Propriété et emprunt - à dire : ça sert D'ABORD en mono-thread
 Le borrow checker n'est pas un outil de concurrence. La majorité des
 développeurs en bénéficient sans jamais écrire un `thread::spawn` :
 pas d'use-after-free, pas de double-free, pas d'invalidation d'itérateur,
-et une libération déterministe (`Drop`) — donc pas seulement de la mémoire,
+et une libération déterministe (`Drop`) - donc pas seulement de la mémoire,
 aussi les fichiers, les verrous, les connexions.
 
 La règle affichée est la formulation courte de « aliasing XOR mutation » :
 soit N lecteurs, soit 1 écrivain, jamais les deux en même temps.
 Tout le reste en découle.
 
-🧵 Fearless concurrency — LE pont entre les deux blocs
+🧵 Fearless concurrency - LE pont entre les deux blocs
 C'est le point à faire passer : `Send` et `Sync` ne sont pas un système
 à part. Ils font remonter AU NIVEAU DES THREADS exactement la règle du
 bloc précédent. Deux blocs, une seule idée, à deux échelles.

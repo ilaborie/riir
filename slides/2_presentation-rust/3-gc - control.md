@@ -23,11 +23,12 @@ article {
 
 <!-- pause -->
 
-#### 🎛️ Contrôle sur la gestion mémoire
+#### 🎛️ Contrôle
 
 - Choix d'allocation: pile ou tas
 - Choix de pattern d'allocation: arena, slab, ...
 - Choix de l'allocateur: jemalloc, mimalloc, ...
+- Accès au bas niveau, <abbr title="Simple Instruction, Multiple Data">SIMD</abbr>
 
 <!-- notes -->
 

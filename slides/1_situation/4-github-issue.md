@@ -36,7 +36,7 @@ classes = ["no_title"]
       font-size: .5rem;
 
       /* The inline SVG carries a 24px intrinsic size, which would stay 24px at
-         every resolution — size it against the text instead. */
+         every resolution - size it against the text instead. */
       img {
         width: 1.5em;
         height: 1.5em;

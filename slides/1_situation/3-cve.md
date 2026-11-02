@@ -29,11 +29,10 @@ article {
 
 <!-- pause -->
 
+**💭 Et si on pouvait éviter ça ?**
+
+<!-- notes -->
+
 📉 Android: **76% → 24%** en 6 ans, **< 20%** en 2025
 
 - [Rust in Android: move fast and fix things](https://blog.google/security/rust-in-android-move-fast-fix-things/)
-
-<!-- pause -->
-
-**💭 Et si on pouvait éviter ça ?**
-

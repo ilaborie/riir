@@ -93,7 +93,7 @@ flex-direction: column;
   <blockquote>
     <p>Soyez donc résolus à ne plus<br> servir et vous serez libres.</p>
     <footer>
-      — Étienne de La Boétie
+      - Étienne de La Boétie
       - <cite>Discours de la servitude volontaire (1576)</cite>
     </footer>
   </blockquote>

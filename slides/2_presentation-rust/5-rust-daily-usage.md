@@ -34,7 +34,7 @@ Linux, Android, Fuchsia, Windows, ...
 
 #### 💻 Outils
 
-[uv](https://github.com/astral-sh/uv), [ruff](https://astral.sh/ruff), [ty](https://astral.sh/blog/ty), [biome](https://biomejs.dev/), [oxlint](https://oxc.rs/), ...
+[uv](https://github.com/astral-sh/uv), [ruff](https://astral.sh/ruff), [ty](https://astral.sh/blog/ty), [biome](https://biomejs.dev/), [oxlint](https://oxc.rs/), [pnpm](https://pnpm.io/), [vite](https://vite.dev/) ...
 
 <!-- notes -->
 
@@ -67,7 +67,7 @@ Vous utilisez déjà du code Rust, sans le savoir.
   <https://lwn.net/Articles/1049831/>
   Documentation officielle : <https://www.kernel.org/doc/html/latest/rust/>
 - Android : pile Bluetooth, allocateur ashmem, ...
-  Sous les 20% de vulnérabilités mémoire — cf. le slide 1.3
+  Sous les 20% de vulnérabilités mémoire - cf. le slide 1.3
   <https://security.googleblog.com/2024/09/eliminating-memory-safety-vulnerabilities-Android.html>
 - Windows : Rust tourne DANS le noyau (win32kbase_rs.sys, DirectWriteCore),
   et la crypto TLS passe par rustls-symcrypt.
@@ -75,7 +75,7 @@ Vous utilisez déjà du code Rust, sans le savoir.
 
 💻 Outils
 uv, ruff, ty (Astral), biome, oxlint : l'outillage Python et JS
-se réécrit en Rust. Le détail — et l'argument qui tue — sur le slide 4.4.
+se réécrit en Rust. Le détail - et l'argument qui tue - sur le slide 4.4.
 
 📊 Ordres de grandeur
 - Cloudflare : 160+ pays, plus de 10% du trafic web mondial

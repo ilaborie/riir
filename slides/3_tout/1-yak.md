@@ -52,4 +52,4 @@ Photo by <a href="https://unsplash.com/@p_kuzovkova?utm_source=unsplash&utm_medi
 On ne peut pas « raser » les crustacés, car ils n’ont pas de poils à proprement parler. Leur corps est recouvert d’une carapace chitineuse, une sorte d’exosquelette rigide, pas de peau ni de poils comme les mammifères.
 
 
-Par contre, certains crustacés (comme les crabes poilus du Yémen ou le crabe yéti) ont des soies ou poils sensoriels sur leurs pattes ou pinces — mais ces « poils » sont en fait des excroissances rigides de chitine, pas des poils kératiniques. On pourrait les couper ou les brosser, mais pas vraiment les « raser » au sens habituel du terme.
+Par contre, certains crustacés (comme les crabes poilus du Yémen ou le crabe yéti) ont des soies ou poils sensoriels sur leurs pattes ou pinces - mais ces « poils » sont en fait des excroissances rigides de chitine, pas des poils kératiniques. On pourrait les couper ou les brosser, mais pas vraiment les « raser » au sens habituel du terme.

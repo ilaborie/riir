@@ -19,6 +19,9 @@ article {
 - [PyO3](https://pyo3.rs/): bindings Rust ↔ Python
 - [Maturin](https://www.maturin.rs/) : packaging
 
+
+- [🎥 Rust & Python: Le Menu Parfait ?](https://www.youtube.com/watch?v=FuopGH51P4M)
+
 <!-- pause -->
 
 #### 🏆 Champions
@@ -33,7 +36,7 @@ article {
 
 #### 🛠️ Et l'outillage aussi
 
-[uv](https://github.com/astral-sh/uv), [ruff](https://astral.sh/ruff), [ty](https://astral.sh/blog/ty) — [Astral a rejoint OpenAI](https://astral.sh/blog/openai) en mars 2026
+[uv](https://github.com/astral-sh/uv), [ruff](https://astral.sh/ruff), [ty](https://astral.sh/blog/ty) - [Astral a rejoint OpenAI](https://astral.sh/blog/openai) en mars 2026
 
 <!-- notes -->
 
@@ -56,5 +59,5 @@ stratégique, ce n'est plus un pari technique.
 🧵 Bonus si on demande « et le GIL ? »
 PyO3 supporte le Python free-threaded (PEP 703, Python 3.13+).
 <https://pyo3.rs/latest/free-threading.html>
-Le sans-GIL rend justement le parallélisme natif intéressant —
+Le sans-GIL rend justement le parallélisme natif intéressant -
 et Rust garantit l'absence de data race à la compilation.

@@ -23,7 +23,7 @@ article {
 
 #### 🐫 Fonctionnelle
 
-- [**OCaml**](https://ocaml.org/), [**SML**](https://smlfamily.github.io/) : Types algébriques, <span lang="en">pattern matching</span>
+- [**OCaml**](https://ocaml.org/) : Types algébriques, <span lang="en">pattern matching</span>
 - [**Haskell**](https://www.haskell.org/) : Traits
 
 <!-- pause -->

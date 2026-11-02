@@ -3,8 +3,8 @@
 
    The deck is drawn on a 1920x1080 canvas: Toboggan's own `html` rule pins the
    root font at a fixed 32px, and every size here is derived from it. On any
-   other screen — a 1280x720 laptop, the 640x480 or 1024x768 projector some
-   venues still hand out — the text kept its pixel size while the slide box
+   other screen - a 1280x720 laptop, the 640x480 or 1024x768 projector some
+   venues still hand out - the text kept its pixel size while the slide box
    shrank, so lines re-wrapped, content spilled past `section { overflow: hidden }`
    and scrollbars appeared.
 
@@ -14,11 +14,11 @@
    shorter side: a 4:3 projector gets the 16:9 layout with vertical room to
    spare rather than an overflow.
 
-   Corollary: illustrations must be sized in `rem`, never in `vw`/`vh` — a
+   Corollary: illustrations must be sized in `rem`, never in `vw`/`vh` - a
    viewport unit escapes this scale and drifts out of alignment as soon as the
    aspect ratio is not 16:9. 1vw = 0.6rem and 1vh = 0.3375rem on the canvas.
 
-   Browser printing gets the same treatment — there `vw`/`vh` resolve against the
+   Browser printing gets the same treatment - there `vw`/`vh` resolve against the
    page box, so a printed sheet lands on the same proportions as the screen.
    (`toboggan pdf` goes through Typst and never sees this stylesheet.)
    --------------------------------------------------------------------------- */
