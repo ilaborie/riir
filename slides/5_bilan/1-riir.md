@@ -5,7 +5,15 @@ classes = ["no_title", "spread-steps"]
 
 <style>
 article {
-  margin-bottom: 2em;
+  /* dégage les décorations du footer, qui débordent au-dessus de la barre */
+  margin-bottom: 3em;
+}
+
+/* La feuille de style du deck met le padding des listes à zéro, donc les items
+   s'alignaient sur le « si ... » qui les introduit. 1em les décale juste assez
+   pour qu'on lise « si <condition> » puis la liste, sans marqueur. */
+.two-columns ul {
+  padding-inline-start: 1em;
 }
 </style>
 
@@ -43,7 +51,7 @@ article {
 
 #### 🎯 Stratégie
 
-- Intégrer Rust dans les <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Deployement">CD</abbr>
+- Intégrer Rust dans les <abbr title="Continuous Integration">CI</abbr>/<abbr title="Continuous Deployment">CD</abbr>
 - Former progressivement les équipes
 - Commencer petit
 

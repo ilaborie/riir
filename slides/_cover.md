@@ -29,18 +29,17 @@ background-position:
     51% 13%
     ;
 background-size:
-    30vw,
-    50vw,
-    13vw,
-    15vw,
-    12vw,
-    3.5vw,
-    2.5vw,
-    4vw,
-    2vw
+    18rem,
+    30rem,
+    7.8rem,
+    9rem,
+    7.2rem,
+    2.1rem,
+    1.5rem,
+    2.4rem,
+    1.2rem
     ;
 background-repeat:
-    no-repeat,
     no-repeat,
     no-repeat,
     no-repeat,
@@ -73,35 +72,42 @@ section.cover, section.center {
   }
 }
 
+/* Chrome's UA margin for `figure` is a fixed 40px, which alone would not follow
+   the deck's viewport scale (see public/style.css); 1.25rem is that same 40px on
+   the 1920x1080 canvas. */
+figure {
+    margin-inline: 1.25rem;
+}
+
 .crab {
-    width: 30vw;
+    width: 18rem;
     position: absolute;
-    bottom: -4vh;
-    right: -2vw;
+    bottom: -1.35rem;
+    right: -1.2rem;
     transform: rotate(-.05turn);
 }
 
 .shell1 {
-    width: 10vw;
+    width: 6rem;
     position: absolute;
-    bottom: 16vh;
-    right: 24vw;
+    bottom: 5.4rem;
+    right: 14.4rem;
     transform: rotate(.05turn);
 }
 
 .shell2 {
-    width: 10vw;
+    width: 6rem;
     position: absolute;
-    bottom: 22vh;
-    right: 12vw;
+    bottom: 7.425rem;
+    right: 7.2rem;
     transform: rotate(-0.08turn);
 }
 
 .shrimp {
-    width: 12vw;
+    width: 7.2rem;
     position: absolute;
-    top: 26vh;
-    right: 27vw;
+    top: 8.775rem;
+    right: 16.2rem;
     transform: rotate(-0.05turn);
 }
 

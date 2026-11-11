@@ -1,14 +1,14 @@
 default_job = "toboggan"
 
 [jobs.toboggan]
-command = ["toboggan-cli", "--output", "riir.toml", "./slides/"]
+command = ["toboggan", "build", "-p", "./slides", "-o", "riir.toml"]
 need_stdout = true
 allow_warnings = true
 default_watch = false
 watch = ["slides"]
 
 [jobs.html]
-command = ["toboggan-cli", "--output", "riir.html", "./slides/"]
+command = ["toboggan", "build", "-p", "./slides", "-o", "riir.html"]
 need_stdout = true
 allow_warnings = true
 default_watch = false

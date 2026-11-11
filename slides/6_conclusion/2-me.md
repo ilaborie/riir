@@ -47,11 +47,9 @@ h3 {
 
 <div class="auto-carousel"></div>
 
-<!-- Notes -->
+<!-- notes -->
 
 Darwin: mesure l'impact sur la biodiv des entreprises.
-
-TODO: Video darwin.
 
 Rust daily - c'est possible
 
